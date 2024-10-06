@@ -1,13 +1,13 @@
 package io.example.test;
 
-import java.util.ArrayList;
+import java.util.PriorityQueue;
 
 // Gives a unique ID
 public class UniqueIDGiver {
-    private ArrayList<Integer> nums;
+    private PriorityQueue<Integer> nums;
 
     public UniqueIDGiver() {
-        nums = new ArrayList<Integer>();
+        nums = new PriorityQueue<Integer>();
         nums.add(1);
     }
 
@@ -15,20 +15,23 @@ public class UniqueIDGiver {
     // cam be given.
     public int next() {
         if (nums.size() > 1) {
-            int num = nums.get(0);
-            nums.remove(0);
+            int num = nums.remove();
             return num;
         }
-        if (nums.size() == 1 && nums.get(0) < Integer.MAX_VALUE) {
-            int num = nums.get(0);
-            nums.remove(0);
+        if (nums.size() == 1 && nums.peek() < Integer.MAX_VALUE) {
+            int num = nums.remove();
             nums.add(num+1);
             return num;
+        }
+        if (nums.size() == 1 && nums.peek() == Integer.MAX_VALUE) {
+            return 0;
+        } else {
+            return 0;
         }
     }
 
     // Returns an ID back to the IDgiver.
-    public void return(Integer ID) {
-        nums.push(0, ID);
+    public void returnID(Integer ID) {
+        nums.add(ID);
     }
 }
