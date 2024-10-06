@@ -6,7 +6,7 @@ public class Assets {
     // Misc textures
     public static Texture couldNotLoad;
     
-    // Building textures
+    // Building textures used by gamemap.
     public static Texture accommodationTexture;
     public static Texture lectureTheatreTexture;
 
