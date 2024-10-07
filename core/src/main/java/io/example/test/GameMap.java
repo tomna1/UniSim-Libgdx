@@ -16,11 +16,10 @@ public class GameMap {
 
     // Used to draw all buildings.
     private ArrayList<DrawableBuilding> buildings;
-    
 
     // Used to store what each individual tile contains and where most checks and
     // algorithms take place.
-    Grid grid;
+    private Grid grid;
     
     private int selectedBuildingPosX;
     private int selectedBuildingPosY;
@@ -42,23 +41,49 @@ public class GameMap {
         return grid.getTile(posX, posY);
     }
 
+    // returns the index of a building in buildings at a particular point
+    // on the map. Will return -1 if there is not building at that point on the map.
+    private int indexOfBuildingAtPoint(int posX, int posY) {
+        if (getTile(posX, posY) != TileType.Building && getTile(posX, posY) != TileType.BuildingBL) {
+            return -1;
+        }
+
+        Vector2i pos = new Vector2i();
+        for (int i = 0; i < buildings.size(); i++) {
+            pos.x = buildings.get(i).getPosX();
+            pos.y = buildings.get(i).getPosY();
+            int height = buildings.get(i).getHeight();
+            int width = buildings.get(i).getWidth();
+            if (
+            posX >= pos.x &&
+            posX <= pos.x + width &&
+            posY >= pos.y &&
+            posY <= pos.y + height
+            ) {
+                return i;
+            }
+
+        }
+        return -1;
+    }
+
     // adds a buildable to the map. Returns true if successfully added and false
     // otherwise.
     boolean addBuildable(Buildable type, int posX, int posY) {
         if (type == Buildable.Path) {
             Vector2i pos = new Vector2i(posX, posY);
-            return grid.addPath(pos);
+            return grid.addPath(pos.x, pos.y);
         }
         
         if (type == Buildable.Accommodation) {
-            DrawableBuilding building = new DrawableBuilding(posX, posY, Accommodation.getWidth(), Accommodation.getHeight(), type);
+            DrawableBuilding building = new DrawableBuilding(posX, posY, type);
             if (grid.containsSpace(building) == false) return false;
             if (grid.addBuilding(building) == false) return false;
             buildings.add(building);
             return true;
         }
         else if (type == Buildable.LectureTheatre) {
-            DrawableBuilding building = new DrawableBuilding(posX, posY, LectureTheatre.getWidth(), LectureTheatre.getHeight(), type);
+            DrawableBuilding building = new DrawableBuilding(posX, posY, type);
             if (grid.addBuilding(building) == false) return false;
             buildings.add(building);
             return true;
@@ -78,29 +103,18 @@ public class GameMap {
         return true;
     }
 
-    boolean removeSelectedBuilding() {
-        Vector2i pos = new Vector2i(selectedBuildingPosX, selectedBuildingPosY);
-        for (int i = 0; i < buildings.size(); i++) {
-            int posX = buildings.get(i).getPosX();
-            int posY = buildings.get(i).getPosY();
-            int height = buildings.get(i).getHeight();
-            int width = buildings.get(i).getWidth();
-            if (
-            pos.x >= posX &&
-            pos.x <= posX + width &&
-            pos.y >= posY &&
-            pos.y <= posY + height
-            ) {
-                if (grid.removeBuilding(buildings.get(i)) == false) return false;
-                buildings.remove(i);
-                return true;
-            }
 
-        }
-        return false;
+    boolean removeSelectedBuilding() {
+        int index = indexOfBuildingAtPoint(selectedBuildingPosX, selectedBuildingPosY);
+        if (index == -1) return false;
+
+        if (grid.removeBuilding(buildings.get(index)) == false) return false;
+        buildings.remove(index);
+        return true;
     }
 
-    boolean removeBuildableAtPoint(Vector2i pos) {
+    // Removes a buildable from the map where the building is at the point pos.
+    public boolean removeBuildableAtPoint(Vector2i pos) {
         // Checks if the tile contains a non removeable.
         TileType tile = grid.getTile(pos.x, pos.y);
         if (tile == TileType.Empty || tile == TileType.River || tile == TileType.Road) {
@@ -108,43 +122,24 @@ public class GameMap {
         }
         // If the tile contains a path, remove it.
         if (tile == TileType.Path) {
-            return grid.removePath(pos);
+            return grid.removePath(pos.x, pos.y);
         }
         
+        
         // Removes the building
-        for (int i = 0; i < buildings.size(); i++) {
-            int posX = buildings.get(i).getPosX();
-            int posY = buildings.get(i).getPosY();
-            int height = buildings.get(i).getHeight();
-            int width = buildings.get(i).getWidth();
-            if (
-            pos.x >= posX &&
-            pos.x <= posX + width &&
-            pos.y >= posY &&
-            pos.y <= posY + height
-            ) {
-                if (grid.removeBuilding(buildings.get(i)) == false) return false;
-                buildings.remove(i);
-                return true;
-            }
+        int index = indexOfBuildingAtPoint(pos.x, pos.y);
+        if (index == -1) return false;
 
-        }
-        return false;
+        if (grid.removeBuilding(buildings.get(index)) == false) return false;
+        buildings.remove(index);
+        return true;
     }
 
     public void draw(SpriteBatch batch) {
         grid.draw(batch);
         // Draws the buildings
-        // System.out.println(buildings.size());
         for (DrawableBuilding b : buildings) {
-            // System.out.println(b.getType());
             b.draw(batch);
         }
     }
-
-    public void drawGrid(SpriteBatch batch) {
-        grid.draw(batch);
-    }
-
-
 }

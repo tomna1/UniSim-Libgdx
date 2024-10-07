@@ -4,6 +4,9 @@ import io.example.test.GameManager.Colours;
 
 // Non drawable object.
 public class LectureTheatre {
+    static final int width = 3;
+    static final int height = 3;
+    
     int studentSize;
     int studentCount;
 
@@ -33,9 +36,9 @@ public class LectureTheatre {
 
 
     static int getWidth() {
-        return 3;
+        return width;
     }
     static int getHeight() {
-        return 3;
+        return height;
     }
 }

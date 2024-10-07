@@ -37,57 +37,79 @@ public class Grid {
         return height;
     }
 
-    public TileType getTile(int posX, int posY) {
-        if (posX >= width || posY >= height) return null;
-        return tiles[posY][posX];
-    }
-
-    
-    public void draw(SpriteBatch batch) {
-        // Draw all tiles. If they are a building tile, will draw grass instead.
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                if (tiles[i][j] == TileType.Path) {
-                    batch.draw(Assets.pathTile, j, i, 1, 1);
-                } else {
-                    batch.draw(Assets.grassTile, j, i, 1, 1);
-                }
-            }
-        }
-    }
-
-    public boolean posWithinGrid(Vector2i pos) {
-        if (pos.x < 0 || pos.y < 0) return false;
-        if (pos.x >= width || pos.y >= height) return false;
+    // Returns true if the coordinates are located within the grid.
+    public boolean posWithinGrid(int posX, int posY) {
+        if (posX < 0 || posY < 0) return false;
+        if (posX >= width || posY >= height) return false;
 
         return true;
     }
 
+    // Checks if a building can fit within the dimension of the grid. Does not
+    // check if there is actual space in the grid.
+    public boolean canBuildingFitInGrid(DrawableBuilding b) {
+        if (b.getPosX() < 0 || b.getPosY() < 0) return false;
+        
+        if (
+        b.getPosX() + b.getWidth() > width ||
+        b.getPosY() + b.getHeight() > height
+        ) return false;
 
-    public boolean addPath(Vector2i pos) {
-        if (posWithinGrid(pos) == false) return false;
+        return true;
+    }
+
+    // Returns true if there is enough space in the grid to fit a building at a point.
+    public boolean containsSpace(DrawableBuilding b) {
+        if (canBuildingFitInGrid(b) == false) return false;
+        int posX = b.getPosX();
+        int posY = b.getPosY();
+        int width = b.getWidth();
+        int height = b.getHeight();
+        // Checks all tiles that the building work take up are empty.
+        for (int i = posY; i < posY + height; i++) {
+            for (int j = posX; j < posX + width; j++) {
+                if (tiles[i][j] != TileType.Empty) return false;
+            }
+        }
+        return true;
+    }
+
+    // Returns the tiletupe at a particular coorindate. Returns null if outside range.
+    public TileType getTile(int posX, int posY) {
+        if (posWithinGrid(posX, posY) == false) return null;
+        return tiles[posY][posX];
+    }
+
+
+    // Adds a singular path tile to the grid.
+    public boolean addPath(int posX, int posY) {
+        Vector2i pos = new Vector2i(posX, posY);
+        if (posWithinGrid(pos.x, pos.y) == false) return false;
         if (tiles[pos.y][pos.x] != TileType.Empty) return false;
         tiles[pos.y][pos.x] = TileType.Path;
         return true;
     }
 
+    // Adds a straight path to the grid from start to end.
     public boolean addStraightPath(Vector2i start, Vector2i end) {
-        if (posWithinGrid(start) == false) return false;
-        if (posWithinGrid(end) == false) return false;
+        if (posWithinGrid(start.x, start.y) == false) return false;
+        if (posWithinGrid(end.x, end.y) == false) return false;
         if (start.x != end.x && start.y != end.y) return false;
         
         
         return true;
     }
 
-    public boolean removePath(Vector2i pos) {
-        if (posWithinGrid(pos) == false) return false;
-        if (tiles[pos.y][pos.x] != TileType.Path) return false;
-        tiles[pos.y][pos.x] = TileType.Empty;
+    // Removes a singular path file from the grid.
+    public boolean removePath(int posX, int posY) {
+        if (posWithinGrid(posX, posY) == false) return false;
+        if (tiles[posY][posX] != TileType.Path) return false;
+        tiles[posY][posX] = TileType.Empty;
         return true;
     }
 
-
+    // Adds a building to the grid. Returns true if successfully added and false
+    // otherwise.
     public boolean addBuilding(DrawableBuilding b) {
         if (containsSpace(b) == false) return false;
 
@@ -108,7 +130,7 @@ public class Grid {
     // ISSUE: POSSIBLE ISSUE AS A USER MAY BE ABLE TO REMOVE A DIFFERENT TYPE
     // OF BUILDING FROM THE ONE THAT WAS PLACED. THE GAMEMAP SHOULD FIX THIS
     // AS A TILE SHOULD ONLY BE ASSOCIATED WITH A SINGLE BUILDING BUT ANYTHING
-    // IS POSSIBLE.
+    // IS POSSIBLE. Removes a building from the grid.
     public boolean removeBuilding(DrawableBuilding b) {
         int posX = b.getPosX();
         int posY = b.getPosY();
@@ -140,32 +162,20 @@ public class Grid {
         return true;
     }
 
-    // Checks if a building can fit within the dimension of the grid. Does not
-    // check if there is actual space in the grid.
-    public boolean canBuildingFitInGrid(DrawableBuilding b) {
-        if (b.getPosX() < 0 || b.getPosY() < 0) return false;
-        
-        if (
-        b.getPosX() + b.getWidth() > width ||
-        b.getPosY() + b.getHeight() > height
-        ) return false;
 
-        return true;
-    }
-
-    public boolean containsSpace(DrawableBuilding b) {
-        if (canBuildingFitInGrid(b) == false) return false;
-        int posX = b.getPosX();
-        int posY = b.getPosY();
-        int width = b.getWidth();
-        int height = b.getHeight();
-        // Checks all tiles that the building work take up are empty.
-        for (int i = posY; i < posY + height; i++) {
-            for (int j = posX; j < posX + width; j++) {
-                if (tiles[i][j] != TileType.Empty) return false;
+    // Draws all the tiles that make up the grid.
+    public void draw(SpriteBatch batch) {
+        // Draw all tiles. If they are a building tile, will draw grass instead.
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (tiles[i][j] == TileType.Path) {
+                    batch.draw(Assets.pathTile, j, i, 1, 1);
+                } else {
+                    batch.draw(Assets.grassTile, j, i, 1, 1);
+                }
             }
         }
-        return true;
     }
+
 
 }

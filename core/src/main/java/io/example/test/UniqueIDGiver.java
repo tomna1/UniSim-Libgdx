@@ -2,7 +2,8 @@ package io.example.test;
 
 import java.util.PriorityQueue;
 
-// Gives a unique ID
+// Used to give a unique ID to something. next() gets the unique
+// ID and returnID returns the ID back to the ID giver.
 public class UniqueIDGiver {
     private PriorityQueue<Integer> nums;
 
@@ -31,7 +32,15 @@ public class UniqueIDGiver {
     }
 
     // Returns an ID back to the IDgiver.
-    public void returnID(Integer ID) {
+    public void returnID(int ID) {
         nums.add(ID);
+    }
+
+    // Returns true if at least one more valid ID can be given.
+    public boolean canGiveID() {
+        if (nums.size() == 1 && nums.peek() == Integer.MAX_VALUE) {
+            return false;
+        }
+        return true;
     }
 }

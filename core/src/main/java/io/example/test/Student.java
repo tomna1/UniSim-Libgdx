@@ -5,28 +5,45 @@ import java.util.ArrayList;
 import io.example.test.GameManager.Colours;
 /* */
 public class Student {
+    private static final float moveSpeed = 2.0f;
+
     private Colours colour;
     private String name;
 
+    // A students position can not be directly moved but rather they
+    // are told the path to take and the update method will move the
+    // student.
     private float posX;
     private float posY;
 
     private float homePosX;
     private float homePosY;
 
+    // Whichever meter is lowest will determine what the student does next. All
+    // meters decrease over time and increase when the student does a certain thing.
+
+    // Learning meter is increased when a student is in a lecture or library. 
+    private float learningMeter;
+    // Increase when the student eats.
+    private float hungerMeter;
+    // Increases when the student sleeps at their home.
+    private float sleepMeter;
+
+
     // A student can only be moving to one building at a time.
     private DrawableBuilding movingTo;
     // The points that would move the student to the building.
     ArrayList<Vector2i> movePoints;
 
-    private static final float moveSpeed = 2.0f;
-
+    // What the student is currently doing
     private Status status;
-    // 
+    // how long until the student finishes what they are currently doing.
     float timeUntilFree;
 
     public enum Status {
         Free,
+        Eating,
+        Sleeping,
         InLecture,
         Travelling
     }

@@ -1,6 +1,5 @@
 package io.example.test;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -14,23 +13,33 @@ public class DrawableBuilding {
     private int height;
     // The X Pos of the bottom left corner of the object.
     private int posX;
-    // THe Y pos of the bottom left corner of the object.
+    // The Y pos of the bottom left corner of the object.
     private int posY;
 
-    Buildable type;
+    private Buildable type;
     
     // The sprite used to draw the building.
-    protected Sprite sprite;
+    private Sprite sprite;
 
-    public DrawableBuilding(int posX, int posY, int width, int height, GameMap.Buildable type) {
+    public DrawableBuilding(int posX, int posY, GameMap.Buildable type) {
         this.posX = posX;
         this.posY = posY;
-        this.width = width;
-        this.height = height;
         this.type = type;
-        if (type == Buildable.Accommodation) sprite = new Sprite(Assets.accommodationTexture);
-        else if (type == Buildable.LectureTheatre) sprite = new Sprite(Assets.lectureTheatreTexture);
-        else sprite = new Sprite(Assets.couldNotLoad);
+        if (type == Buildable.Accommodation) {
+            sprite = new Sprite(Assets.accommodationTexture);
+            width = Accommodation.getWidth();
+            height = Accommodation.getHeight();
+        }
+        else if (type == Buildable.LectureTheatre) {
+            sprite = new Sprite(Assets.lectureTheatreTexture);
+            width = LectureTheatre.getWidth();
+            height = LectureTheatre.getHeight();
+        }
+        else {
+            sprite = new Sprite(Assets.couldNotLoad);
+            width = 1;
+            height = 1;
+        }
         sprite.setSize(width, height);
         sprite.setX(posX);
         sprite.setY(posY);
