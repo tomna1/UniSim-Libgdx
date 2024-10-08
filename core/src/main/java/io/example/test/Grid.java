@@ -1,6 +1,12 @@
 package io.example.test;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.utils.Array;
+
+import java.util.Queue;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.lang.Boolean;
 
 // A grid contains informtion about each specific tile in the game.
 // Will be used to check if a building can be added to the map or not.
@@ -78,6 +84,27 @@ public class Grid {
     public TileType getTile(int posX, int posY) {
         if (posWithinGrid(posX, posY) == false) return null;
         return tiles[posY][posX];
+    }
+
+    // Gets the coords of all path tiles/
+    public ArrayList<Vector2i> getAllPaths() {
+        ArrayList<Vector2i> paths = new ArrayList<>();
+
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                if (tiles[i][j] != TileType.Path) paths.add(new Vector2i(j, i));
+            }
+        }
+        return paths;
+    }
+
+    // Returns true if a particular tile on the grid is walkable. A tile is 
+    // walkable if there is a path or building there.
+    public boolean isWalkable(int posX, int posY) {
+        if (posWithinGrid(posX, posY) == false) return false;
+        TileType tile = tiles[posY][posX];
+        if (tile == TileType.Path || tile == TileType.Building || tile == TileType.BuildingBL) return true;
+        return false;
     }
 
 
@@ -160,6 +187,81 @@ public class Grid {
         }
 
         return true;
+    }
+
+
+    // Finds a valid path between a start point and an end point. Will return null if
+    // the path is not possible.
+    public ArrayList<Vector2i> findPath(Vector2i start, Vector2i end) {
+        // Uses BFS algorithm. Optimisations can be made.
+        if (isWalkable(start.x, start.y) == false) return null;
+        if (isWalkable(end.x, end.y) == false) return null;
+        if (start.equals(end)) return null;
+
+        // All path tiles in this algorithm are considered nodes.
+       
+        boolean[][] isVisited = new boolean[height][width];
+        // contains the the tile of the previous node.
+        Vector2i[][] prevNode = new Vector2i[height][width];
+        for (int i = 0; i < height; i++) {
+            for (int j = 0; j < width; j++) {
+                isVisited[i][j] = false;
+            }
+        }
+
+        // This will be used to decide which path tile to visit next.
+        Queue<Vector2i> nodeQueue = new LinkedList<>();
+        nodeQueue.add(start);
+
+        while (nodeQueue.size() > 0) {
+           Vector2i node = nodeQueue.poll();
+            if (node.equals(end)) {
+                // construct the completed path.
+                ArrayList<Vector2i> path = new ArrayList<>();
+                while (node.equals(start) == false) {
+                    path.add(0, node);
+                    node = prevNode[node.y][node.x];
+                }
+                path.add(0, node);
+                return path;
+            } 
+
+            // Checks left neighbour
+            if (getTile(node.x-1, node.y) == TileType.Path) {
+                if (isVisited[node.y][node.x-1] == false) {
+                    nodeQueue.add(new Vector2i(node.x-1, node.y));
+                    prevNode[node.y][node.x-1] = node;
+                    isVisited[node.y][node.x-1] = true;
+                }
+            }
+            // Checks right neighbour
+            if (getTile(node.x+1, node.y) == TileType.Path) {
+                if (isVisited[node.y][node.x+1] == false) {
+                    nodeQueue.add(new Vector2i(node.x+1, node.y));
+                    prevNode[node.y][node.x+1] = node;
+                    isVisited[node.y][node.x+1] = true;
+                }
+            }
+            // Checks up neighbour
+            if (getTile(node.x, node.y+1) == TileType.Path) {
+                if (isVisited[node.y+1][node.x] == false) {
+                    nodeQueue.add(new Vector2i(node.x, node.y+1));
+                    prevNode[node.y+1][node.x] = node;
+                    isVisited[node.y+1][node.x] = true;
+                }
+            }
+            // Checks down neighbour
+            if (getTile(node.x, node.y-1) == TileType.Path) {
+                if (isVisited[node.y-1][node.x] == false) {
+                    nodeQueue.add(new Vector2i(node.x, node.y-1));
+                    prevNode[node.y-1][node.x] = node;
+                    isVisited[node.y-1][node.x] = true;
+                }
+            }
+        }
+
+        // If here is reached, that means all valid nodes have been checked.
+        return null;
     }
 
 

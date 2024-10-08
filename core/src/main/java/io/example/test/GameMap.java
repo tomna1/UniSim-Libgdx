@@ -8,7 +8,7 @@ import io.example.test.Grid.TileType;
 
 // A GameMap is used to draw all of the buildings to the screen as well as
 // be able to using pathing algorithms to find paths for students. ALL LOGIC GOES
-// INTO THE GAMEMANAGER CLASS
+// INTO THE GAMEMANAGER CLASS. CHANGE THIS CLASS TO INHERIT GRID CLASS.
 public class GameMap {
     // A gamemap needs to store:
     //      The buildings on the gamemap
@@ -39,6 +39,18 @@ public class GameMap {
 
     public TileType getTile(int posX, int posY) {
         return grid.getTile(posX, posY);
+    }
+    public boolean isTileWalkable(int posX, int posY) {
+        return grid.isWalkable(posX, posY);
+    }
+    public boolean posWithinMap(int posX, int posY) {
+        return grid.posWithinGrid(posX, posY);
+    }
+    public ArrayList<Vector2i> getAllPaths() {
+        return grid.getAllPaths();
+    }
+    public ArrayList<Vector2i> findPath(Vector2i start, Vector2i end) {
+        return grid.findPath(start, end);
     }
 
     // returns the index of a building in buildings at a particular point
@@ -114,20 +126,20 @@ public class GameMap {
     }
 
     // Removes a buildable from the map where the building is at the point pos.
-    public boolean removeBuildableAtPoint(Vector2i pos) {
+    public boolean removeBuildableAtPoint(int posX, int posY) {
         // Checks if the tile contains a non removeable.
-        TileType tile = grid.getTile(pos.x, pos.y);
+        TileType tile = grid.getTile(posX, posY);
         if (tile == TileType.Empty || tile == TileType.River || tile == TileType.Road) {
             return false;
         }
         // If the tile contains a path, remove it.
         if (tile == TileType.Path) {
-            return grid.removePath(pos.x, pos.y);
+            return grid.removePath(posX, posY);
         }
         
         
         // Removes the building
-        int index = indexOfBuildingAtPoint(pos.x, pos.y);
+        int index = indexOfBuildingAtPoint(posX, posY);
         if (index == -1) return false;
 
         if (grid.removeBuilding(buildings.get(index)) == false) return false;

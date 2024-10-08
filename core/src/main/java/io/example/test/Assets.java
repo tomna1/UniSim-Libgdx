@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Texture;
 public class Assets {
     // Misc textures
     public static Texture couldNotLoad;
+    public static Texture studentTexture;
     
     // Building textures used by gamemap.
     public static Texture accommodationTexture;
@@ -17,6 +18,7 @@ public class Assets {
 
     public static void loadTextures() {
         couldNotLoad = new Texture("misc/couldnot_load.png");
+        studentTexture = new Texture("misc/student.png");
         
         accommodationTexture = new Texture("buildings/house.jpg");
         lectureTheatreTexture = new Texture("buildings/lecture_theatre.png");

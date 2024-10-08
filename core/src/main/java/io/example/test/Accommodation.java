@@ -6,7 +6,7 @@ public class Accommodation {
    static final int height = 2;
    
     // The number of students this accommodation can hold.
-    private int studentSize;
+    private static int studentSize = 2;
     // The number of students currently living in this accommodation.
     private int studentCount;
 
@@ -18,7 +18,6 @@ public class Accommodation {
         this.posX = posX;
         this.posY = posY;
         
-        studentSize = 2;
         studentCount = 0;
 
         // texture.dispose();
@@ -32,7 +31,7 @@ public class Accommodation {
             studentCount++;
         }
     }
-    public int getStudentSize() {
+    public static int getStudentSize() {
         return studentSize;
     }
     public int getStudentCount() {

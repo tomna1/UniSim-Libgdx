@@ -5,10 +5,11 @@ import java.util.ArrayList;
 import io.example.test.GameManager.Colours;
 /* */
 public class Student {
-    private static final float moveSpeed = 2.0f;
-    private static final float learningMeterGain = 2.0f;
-    private static final float hungerMeterGain = 2.0f;
-    private static final float sleepMeterGain = 2.0f;
+    private static final float moveSpeed = 5.0f;
+    // all losses and gains take place over 1 second.
+    private static final float learningMeterGain = 5.0f;
+    private static final float hungerMeterGain = 5.0f;
+    private static final float sleepMeterGain = 5.0f;
     private static final float learningMeterLoss = -1.0f;
     private static final float hungerMeterLoss = -1.0f;
     private static final float sleepMeterLoss = -1.0f;
@@ -19,33 +20,30 @@ public class Student {
     // A students position can not be directly moved but rather they
     // are told the path to take and the update method will move the
     // student.
-    private float posX;
-    private float posY;
+    private Vector2f pos;
 
-    private float homePosX;
-    private float homePosY;
+    // The position of a students home.
+    private Vector2f homePos;
 
     // Whichever meter is lowest will determine what the student does next. All
     // meters decrease over time and increase when the student does a certain thing.
     // All meters should be between 0 and 100 as percentages.
 
     // Learning meter is increased when a student is in a lecture or library. 
-    private float learningMeter;
+    private float learningMeter = 100.0f;
     // Increase when the student eats.
-    private float hungerMeter;
+    private float hungerMeter = 100.0f;
     // Increases when the student sleeps at their home.
-    private float sleepMeter;
+    private float sleepMeter = 100.0f;
 
 
-    // A student can only be moving to one building at a time.
-    private DrawableBuilding movingTo;
     // The points that would move the student to the building.
-    ArrayList<Vector2i> movePoints;
+    private ArrayList<Vector2i> path;
 
     // What the student is currently doing
-    private Status status;
+    private Status status= Status.Free;
     // how long until the student finishes what they are currently doing.
-    float timeUntilFree;
+    private float timeUntilFree;
 
     public enum Status {
         Free,
@@ -55,24 +53,21 @@ public class Student {
         Travelling
     }
     
-    Student(String name, Colours colour, DrawableBuilding home) {
+    Student(String name, Colours colour, Vector2i homePos) {
         this.name = name;
         this.colour = colour;
-        this.posX = home.getPosX();
-        this.posY = home.getPosY();
-        status = Status.Free;
-        homePosX = home.getPosX();
-        homePosY = home.getPosY();
-        movePoints = new ArrayList<Vector2i>();
+        pos = new Vector2f(homePos.x, homePos.y);
+        this.homePos = new Vector2f(homePos.x, homePos.y);
+        this.path = new ArrayList<Vector2i>();
     }
 
     // standard getters.
 
     public float getPosX() {
-        return posX;
+        return pos.x;
     }
     public float getPosY() {
-        return posY;
+        return pos.y;
     }
     public String getName() {
         return name;
@@ -80,6 +75,17 @@ public class Student {
     public Colours getColour() {
         return colour;
     }
+    public float getSleepMeter() {
+        return sleepMeter;
+    }
+    public float getHungerMeter() {
+        return hungerMeter;
+    }
+
+    public float getLearningMeter() {
+        return learningMeter;
+    }
+
 
     public boolean isFree() {
         if (status == Status.Free) {
@@ -89,16 +95,25 @@ public class Student {
     }
 
     public void setNewHome(int posX, int posY) {
-        homePosX = posX;
-        homePosY = posY;
+        homePos.x = posX;
+        homePos.y = posY;
     }
 
-    public void moveTo(DrawableBuilding building) {
-        movingTo = building;
+    // Will make the student sleep for that set amount of time.
+    public void sleep(float time) {
+        if (status == Status.Free) {
+            status = Status.Sleeping;
+            timeUntilFree = time;
+        }
     }
-    public void setPath(ArrayList<Vector2i> path) {
-        movePoints = path;
+    // Will make the student eat for that amount of time.
+    public void eat(float time) {
+        if (status == Status.Free) {
+            status = Status.Eating;
+            timeUntilFree = time;
+        }
     }
+
 
     // Will make sure that all meters are within the 0-100 range inclusively.
     private void validateMeters() {
@@ -113,70 +128,107 @@ public class Student {
     }
 
     // Will apply loss to the meters specified in the function. Will make sure that no meters go lower than 0.
-    public void applyMeterLoss(boolean learningMeter, boolean sleepingMeter, boolean hungerMeter, float deltaTime) {
+    // This function should be called every 10 seconds.
+    public void applyMeterLoss(boolean learningMeter, boolean sleepMeter, boolean hungerMeter) {
         if (learningMeter) {
-            if (this.learningMeter > 0) this.learningMeter -= learningMeterLoss * deltaTime;
+            this.learningMeter += learningMeterLoss;
         }
-        if (sleepingMeter) {
-            if (this.sleepMeter > 0) this.sleepMeter -= sleepMeterLoss * deltaTime;
+        if (sleepMeter) {
+            this.sleepMeter += sleepMeterLoss;
         }
         if (hungerMeter) {
-            if (this.hungerMeter > 0) this.hungerMeter -= hungerMeterLoss * deltaTime;
+            this.hungerMeter += hungerMeterLoss;
         }
-
         validateMeters();
     }
 
+
+    // update function will update all the meter associated with the student and move
+    // the student if they are travelling.
+    public void update(float deltaTime, boolean updateMeters) {
+        if (updateMeters) {
+            applyMeterLoss(true, true, true);
+            if (status == Status.Eating) hungerMeter += hungerMeterGain;
+            else if (status == Status.Sleeping) sleepMeter += sleepMeterGain;
+            else if (status == Status.InLecture) learningMeter += learningMeterGain;
+            validateMeters();
+        }
+
+        if (status == Status.Travelling) {
+            move(deltaTime);
+        }
+
+        // updates the time until free if a student is doing an activity.
+        if (status == Status.Eating || status == Status.Sleeping) timeUntilFree -= deltaTime;
+        if (timeUntilFree <= 0.0f) status = Status.Free;
+    }
+
     
-    // update function will change the variables of the student depending status of the student.
-    // EG if they are sleeping then the sleeping meter will go up.
-    public void update(float deltaTime) {
-        
-        if (status == Status.Free) {
-            applyMeterLoss(true, true, true, deltaTime);
+    // Moves the student based on the path 
+    private void move(float deltaTime) {
+        if (path.size() == 0) {
+            status = Status.Free;
             return;
         }
 
-        else if (status == Status.InLecture) {
-            applyMeterLoss(false, true, true, deltaTime);
-            learningMeter += learningMeterGain * deltaTime;
-        }
-
-        else if (status == Status.Eating) {
-            applyMeterLoss(true, true, false, deltaTime);
-            hungerMeter += hungerMeterGain * deltaTime;
-        }
-
-        else if (status == Status.Sleeping) {
-            applyMeterLoss(true, false, true, deltaTime);
-            sleepMeter += sleepMeterGain * deltaTime;
-        }
+        Vector2i movingTo = path.get(0);
+        boolean isPositive = false;
+        float distance;
         
-        
-        if (movePoints.size() == 0) return;
-
-        // moves the student in the direction of the building. Dont care about obstacles or path for now.
-        float directionX = movePoints.get(0).x - posX;
-        float directionY = movePoints.get(0).y - posY;
-        status = Status.Travelling;
-        posX += directionX * (deltaTime * moveSpeed);
-        posY += directionY * (deltaTime * moveSpeed);
-        
-        // if they have reached their destination, remove.
-        if (posX == movePoints.get(0).x && posY == movePoints.get(0).y) {
-            movePoints.remove(0);
-
-            if (movingTo.getType() == Buildable.Accommodation) {
-                status = Status.Free;
-            }
-            else if (movingTo.getType() == Buildable.Accommodation) {
-                status = Status.InLecture;
-            }
+        distance = Math.abs(movingTo.x - pos.x);
+        if (movingTo.x - pos.x > 0) isPositive = true;
+        // Will only move the character in a single direction at a time.
+        // AKA character cannot go diagonal.
+        if (distance != 0) {
+            distance -= moveSpeed * deltaTime;
             
+            // if the distance has flipped, that means the student went past their target.
+            if (distance < 0) distance = 0;
+            
+            // calculates the new pos based on the shorter distances.
+            if (isPositive) pos.x = movingTo.x - distance;
+            else pos.x = movingTo.x + distance;
+            return;
         }
 
+        distance = Math.abs(movingTo.y - pos.y);
+        isPositive = false;
+        if (movingTo.y - pos.y > 0) isPositive = true;
+        // Will only move the character in a single direction at a time.
+        // AKA character cannot go diagonal.
+        if (distance != 0) {
+            distance -= moveSpeed * deltaTime;
+            
+            // if the distance has flipped, that means the student went past their target.
+            if (distance < 0) distance = 0;
+            
+            // calculates the new pos based on the shorter distances.
+            if (isPositive) pos.y = movingTo.y - distance;
+            else pos.y = movingTo.y + distance;
+            return;
+        }
+        
+        // If there is no x or y distance to the point, it has been reached.
+        path.remove(0);
+    }
 
-        validateMeters();
+    // Tells the student to travel to a specific point on a map. A student can only
+    // start travelling when they are free.
+    public boolean travelTo(GameMap gameMap, Vector2i point) {
+        if (status != Status.Free) return false;
+        if (findPath(gameMap, point) == false) return false;
+        status = Status.Travelling;
+        return true;
+    }
+
+    private boolean findPath(GameMap gameMap, Vector2i point) {
+        Vector2i charPos = new Vector2i((int)pos.x, (int)pos.y);
+        ArrayList<Vector2i> path = gameMap.findPath(charPos, point);
+        if (path == null) return false;
+        else {
+            this.path = path;
+            return true;
+        }
     }
     
     
