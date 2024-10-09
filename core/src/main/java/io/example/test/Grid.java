@@ -1,12 +1,10 @@
 package io.example.test;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.Array;
 
 import java.util.Queue;
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.lang.Boolean;
 
 // A grid contains informtion about each specific tile in the game.
 // Will be used to check if a building can be added to the map or not.
@@ -93,18 +91,6 @@ public class Grid {
         return tiles[posY][posX];
     }
 
-    // Gets the coords of all path tiles/
-    public ArrayList<Vector2i> getAllPaths() {
-        ArrayList<Vector2i> paths = new ArrayList<>();
-
-        for (int i = 0; i < height; i++) {
-            for (int j = 0; j < width; j++) {
-                if (tiles[i][j] != TileType.Path) paths.add(new Vector2i(j, i));
-            }
-        }
-        return paths;
-    }
-
     // Returns true if a particular tile on the grid is walkable. A tile is 
     // walkable if there is a path or building there.
     public boolean isWalkable(int posX, int posY) {
@@ -134,7 +120,7 @@ public class Grid {
         return true;
     }
 
-    // Removes a singular path file from the grid.
+    // Removes a singular path tile from the grid.
     public boolean removePath(int posX, int posY) {
         if (posWithinGrid(posX, posY) == false) return false;
         if (tiles[posY][posX] != TileType.Path) return false;

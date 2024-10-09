@@ -20,8 +20,6 @@ public class DrawableBuilding {
 
     private BuildingType type;
     
-    // The sprite used to draw the building.
-    private Sprite sprite;
 
     public DrawableBuilding(int ID, int posX, int posY, BuildingType type) {
         this.ID = ID;
@@ -29,23 +27,18 @@ public class DrawableBuilding {
         this.posY = posY;
         this.type = type;
         if (type == BuildingType.Accommodation) {
-            sprite = new Sprite(Assets.accommodationTexture);
             width = 2;
             height = 2;
         }
         else if (type == BuildingType.LectureTheatre) {
-            sprite = new Sprite(Assets.lectureTheatreTexture);
             width = 3;
             height = 3;
         }
         else {
-            sprite = new Sprite(Assets.couldNotLoad);
             width = 1;
             height = 1;
         }
-        sprite.setSize(width, height);
-        sprite.setX(posX);
-        sprite.setY(posY);
+       
     }
 
     public int getPosX() {
@@ -60,9 +53,6 @@ public class DrawableBuilding {
     public int getHeight() {
         return height;
     }
-    public Sprite getSprite() {
-        return sprite;
-    }
     public BuildingType getType() {
         return type;
     }
@@ -72,11 +62,19 @@ public class DrawableBuilding {
     public void setPos(int posX, int posY) {
         this.posX = posX;
         this.posY = posY;
-        sprite.setX(posX);
-        sprite.setY(posY);
     }
 
     public void draw(SpriteBatch batch) {
-        sprite.draw(batch);
+        if (type == BuildingType.Accommodation) {
+            batch.draw(Assets.accommodationTexture, posX, posY, width, height);
+        }
+        else if (type == BuildingType.LectureTheatre) {
+            batch.draw(Assets.lectureTheatreTexture, posX, posY, width, height);
+        }
+        else if (type == BuildingType.Restaurant) {
+            batch.draw(Assets.restaurantTexture, posX, posY, width, height);
+        }
+        
+        
     }
 }

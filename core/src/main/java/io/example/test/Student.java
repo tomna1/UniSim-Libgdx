@@ -2,6 +2,9 @@ package io.example.test;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.graphics.g2d.Sprite;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
 import io.example.test.GameManager.Colours;
 /* */
 public class Student {
@@ -17,6 +20,7 @@ public class Student {
     private int ID;
     private Colours colour;
     private String name;
+    private Sprite sprite;
 
     // A students position can not be directly moved but rather they
     // are told the path to take and the update method will move the
@@ -60,6 +64,8 @@ public class Student {
         this.colour = colour;
         pos = new Vector2f(posX, posY);
         this.homeID = homeID;
+        sprite = new Sprite(Assets.studentTexture);
+        sprite.setSize(1, 1);
     }
 
     // standard getters.
@@ -238,6 +244,13 @@ public class Student {
             this.path = path;
             return true;
         }
+    }
+
+    // Draws student
+    public void draw(SpriteBatch batch) {
+        sprite.setX(pos.x);
+        sprite.setY(pos.y);
+        sprite.draw(batch);
     }
     
     

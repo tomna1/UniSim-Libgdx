@@ -2,6 +2,7 @@ package io.example.test;
 
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -27,8 +28,8 @@ public class Main extends ApplicationAdapter {
 
     GameManager gameManager;
 
-    @Override
     // Called once at the start of the game.
+    @Override
     public void create() {
         Assets.loadTextures();
         batch = new SpriteBatch();

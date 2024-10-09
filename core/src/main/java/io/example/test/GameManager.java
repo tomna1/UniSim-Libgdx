@@ -21,13 +21,15 @@ public class GameManager {
         ORANGE,
         PURPLE
     }
-    // How long the game manager should wait before updating the meters of each
-    // student.
-    private static final float timeBetweenStudentMeterUpdates = 1.0f;
-
     // Each colour represents a university course/department. A student which has
     // the colour red can only attend lectures which also have the colour red.
     private ArrayList<Colours> activatedColours;
+
+    private BuildingType selectedBuilding = BuildingType.Accommodation;
+    private Buildable selectedBuildable = Buildable.Building;
+    // How long the game manager should wait before updating the meters of each
+    // student.
+    private static final float timeBetweenStudentMeterUpdates = 1.0f;
 
     // how much money the player has.
     private int money;
@@ -38,12 +40,13 @@ public class GameManager {
     // long journeys = less satisfaction.
     public float studentDistanceTravelledSatisfaction;
 
-    private ArrayList<Student> students;
 
     private GameMap gameMap;
 
-    private BuildingType selectedBuilding = BuildingType.Accommodation;
-    private Buildable selectedBuildable = Buildable.Building;
+    // could be implemented as a hashmap instead
+    private ArrayList<Student> students;
+    
+    // could be implemented as a hashmap instead.
     private ArrayList<Building> buildings = new ArrayList<>();
 
     private UniqueIDGiver studentIDGiver = new UniqueIDGiver();
@@ -173,7 +176,7 @@ public class GameManager {
         }
     }
 
-
+    // updates all the necessary stats.
     public void update(float deltaTime) {
         totalDeltaTime += deltaTime;
         boolean updateMeters = false;
@@ -187,19 +190,15 @@ public class GameManager {
     }
 
 
-    private void drawMap(SpriteBatch batch) {
-        if (gameMap == null) return;
-        gameMap.draw(batch);
-    }
     private void drawStudents(SpriteBatch batch) {
         if (students.size() == 0) return;
         for (Student stu : students) {
-            batch.draw(Assets.studentTexture, stu.getPosX(), stu.getPosY(), 1, 1);
+            stu.draw(batch);
         }
     }
 
     public void draw(SpriteBatch batch) {
-        drawMap(batch);
+        gameMap.draw(batch);
         drawStudents(batch);
     }
 
