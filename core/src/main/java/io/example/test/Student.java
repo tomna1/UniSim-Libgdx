@@ -14,6 +14,7 @@ public class Student {
     private static final float hungerMeterLoss = -1.0f;
     private static final float sleepMeterLoss = -1.0f;
 
+    private int ID;
     private Colours colour;
     private String name;
 
@@ -22,8 +23,8 @@ public class Student {
     // student.
     private Vector2f pos;
 
-    // The position of a students home.
-    private Vector2f homePos;
+    // Building ID of the students home.
+    private int homeID;
 
     // Whichever meter is lowest will determine what the student does next. All
     // meters decrease over time and increase when the student does a certain thing.
@@ -38,10 +39,10 @@ public class Student {
 
 
     // The points that would move the student to the building.
-    private ArrayList<Vector2i> path;
+    private ArrayList<Vector2i> path = new ArrayList<Vector2i>();;
 
     // What the student is currently doing
-    private Status status= Status.Free;
+    private Status status = Status.Free;
     // how long until the student finishes what they are currently doing.
     private float timeUntilFree;
 
@@ -53,12 +54,12 @@ public class Student {
         Travelling
     }
     
-    Student(String name, Colours colour, Vector2i homePos) {
+    Student(int ID, String name, Colours colour, int homeID, int posX, int posY) {
+        this.ID = ID;
         this.name = name;
         this.colour = colour;
-        pos = new Vector2f(homePos.x, homePos.y);
-        this.homePos = new Vector2f(homePos.x, homePos.y);
-        this.path = new ArrayList<Vector2i>();
+        pos = new Vector2f(posX, posY);
+        this.homeID = homeID;
     }
 
     // standard getters.
@@ -86,6 +87,10 @@ public class Student {
         return learningMeter;
     }
 
+    public int getId() {
+        return ID;
+    }
+
 
     public boolean isFree() {
         if (status == Status.Free) {
@@ -94,9 +99,11 @@ public class Student {
         return false;
     }
 
-    public void setNewHome(int posX, int posY) {
-        homePos.x = posX;
-        homePos.y = posY;
+    public void setNewHome(int homeID) {
+        this.homeID = homeID;
+    }
+    public int getHomeId() {
+        return homeID;
     }
 
     // Will make the student sleep for that set amount of time.
@@ -159,8 +166,10 @@ public class Student {
         }
 
         // updates the time until free if a student is doing an activity.
-        if (status == Status.Eating || status == Status.Sleeping) timeUntilFree -= deltaTime;
-        if (timeUntilFree <= 0.0f) status = Status.Free;
+        if (status == Status.Eating || status == Status.Sleeping) {
+            timeUntilFree -= deltaTime;
+            if (timeUntilFree <= 0.0f) status = Status.Free;
+        }
     }
 
     

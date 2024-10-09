@@ -12,7 +12,6 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.math.Vector2;
 
-import io.example.test.GameMap.Buildable;
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
 public class Main extends ApplicationAdapter {
     private SpriteBatch batch;
@@ -27,8 +26,6 @@ public class Main extends ApplicationAdapter {
     static final int gridHeight = 20;
 
     GameManager gameManager;
-
-    GameMap.Buildable selectedBuilable = Buildable.Accommodation;
 
     @Override
     // Called once at the start of the game.

@@ -6,9 +6,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g3d.particles.values.UnweightedMeshSpawnShapeValue;
 import com.badlogic.gdx.math.Vector2;
 
 import io.example.test.GameMap.Buildable;
+import io.example.test.GameMap.BuildingType;
 
 // Game manager holds all the logic of the game i guess idk.
 public class GameManager {
@@ -38,10 +40,14 @@ public class GameManager {
 
     private ArrayList<Student> students;
 
-
     private GameMap gameMap;
 
-    GameMap.Buildable selectedBuilable;
+    private BuildingType selectedBuilding = BuildingType.Accommodation;
+    private Buildable selectedBuildable = Buildable.Building;
+    private ArrayList<Building> buildings = new ArrayList<>();
+
+    private UniqueIDGiver studentIDGiver = new UniqueIDGiver();
+    
 
     // used for managing deltatime between update calls.
     float totalDeltaTime = 0;
@@ -55,7 +61,6 @@ public class GameManager {
         studentDistanceTravelledSatisfaction = 100.0f;
         studentLearningSatisfaction = 100.0f;
         students = new ArrayList<Student>();
-        selectedBuilable = Buildable.Accommodation;
     }
 
     // This method should be called directly after the game manager is instantiated. 
@@ -63,18 +68,6 @@ public class GameManager {
     public void generateMap(int width, int height) {
         if (gameMap == null) gameMap = new GameMap(width, height);
     }
-    // adds a buildable to the map. Returns true if successfully added and false
-    // otherwise.
-    boolean addBuildable(Buildable type, int posX, int posY) {
-        if (gameMap == null) return false;
-        return gameMap.addBuildable(type, posX, posY);
-    }
-    // Removes a buildable from the map where the building is at the point pos.
-    public boolean removeBuildableAtPoint(int posX, int posY) {
-        if (gameMap == null) return false;
-        return gameMap.removeBuildableAtPoint(posX, posY);
-    }
-    
 
     public void activateColour(Colours colour) {
         if (activatedColours.contains(colour)) return;
@@ -115,37 +108,68 @@ public class GameManager {
         // use 1 to select accommodation and 2 to select path, 3 to select lecture
         // theatre.
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
-            selectedBuilable = Buildable.Accommodation;
+            selectedBuildable = Buildable.Building;
+            selectedBuilding = BuildingType.Accommodation;
         } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) {
-            selectedBuilable = Buildable.Path;
+            selectedBuildable = Buildable.Path;
         } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {
-            selectedBuilable = Buildable.LectureTheatre;
+            selectedBuildable = Buildable.Building;
+            selectedBuilding = BuildingType.LectureTheatre;
         } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_4)) {
             if (students.size() != 0) {
                 Vector2i pos = new Vector2i((int)touchPos.x, (int)touchPos.y);
                 students.get(0).travelTo(gameMap, pos);
             } 
-        } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_5)) {
-            if (students.size() != 0) {
-                System.out.println("Learning Meter = " + students.get(0).getLearningMeter());
-            } 
-        } 
+        }
         
         // If left click, add the selected buildable.
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            boolean isBuilt = addBuildable(selectedBuilable, (int)touchPos.x, (int)touchPos.y);
-            if (selectedBuilable == Buildable.Accommodation && isBuilt) {
-                Vector2i homePos = new Vector2i((int)touchPos.x, (int)touchPos.y);
-                for (int i = 0; i < Accommodation.getStudentSize(); i++) {
-                    Student stu = new Student("", getRandomColour(), homePos);
-                    students.add(stu);
+            if (selectedBuildable == Buildable.Path) {
+                gameMap.addPath((int)touchPos.x, (int)touchPos.y);
+            } 
+            else {
+                int buildID = gameMap.addBuilding(selectedBuilding, (int)touchPos.x, (int)touchPos.y);
+                
+                if (selectedBuilding == BuildingType.Accommodation && buildID != -1) {
+                    Vector2i homePos = new Vector2i((int)touchPos.x, (int)touchPos.y);
+                    Accommodation build = new Accommodation(buildID);
+                    int studentID;
+                    for (int i = 0; i < Accommodation.getStudentSize(); i++) {
+                        studentID = studentIDGiver.next();
+                        Student stu = new Student(studentID,"", getRandomColour(), buildID, homePos.x, homePos.y);
+                        students.add(stu);
+                        build.addStudent(studentID);
+                    }
+                    buildings.add(build);
+                } 
+                
+                else if (selectedBuilding == BuildingType.LectureTheatre && buildID != 0) {
+
                 }
             }
         }
         // If right click, remove building.
         else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             Vector2i pos = new Vector2i((int)touchPos.x, (int)touchPos.y);
-            removeBuildableAtPoint(pos.x, pos.y);
+            if (gameMap.isBuildingAtPoint(pos.x, pos.y) == false) {
+                // removes that path at the point
+                gameMap.removeBuildableAtPoint(pos.x, pos.y);
+                return;
+            } 
+            
+            BuildingType type = gameMap.getBuildTypeAtPoint(pos.x, pos.y);
+            int buildId = gameMap.removeBuildableAtPoint(pos.x, pos.y);
+            // System.out.println("buildID = " + buildId);
+            if (type == BuildingType.Accommodation) {
+                for (int i = 0; i < students.size(); i++) {
+                    // System.out.println("homeID = " + students.get(i).getHomeId());
+                    if (students.get(i).getHomeId() == buildId) {
+                        studentIDGiver.returnID(students.get(i).getId());
+                        students.remove(i);
+                        i--;
+                    }
+                }
+            }
         }
     }
 

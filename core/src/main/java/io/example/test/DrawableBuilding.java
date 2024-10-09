@@ -3,10 +3,12 @@ package io.example.test;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import io.example.test.GameMap.Buildable;
+import io.example.test.GameMap.BuildingType;
 
 // This class should only be used in the gameMap class. It represents a drawable building.
 public class DrawableBuilding {
+    private int ID;
+    
     // width of object sprite in tiles
     private int width;
     // height of object sprit in tiles.
@@ -16,24 +18,25 @@ public class DrawableBuilding {
     // The Y pos of the bottom left corner of the object.
     private int posY;
 
-    private Buildable type;
+    private BuildingType type;
     
     // The sprite used to draw the building.
     private Sprite sprite;
 
-    public DrawableBuilding(int posX, int posY, GameMap.Buildable type) {
+    public DrawableBuilding(int ID, int posX, int posY, BuildingType type) {
+        this.ID = ID;
         this.posX = posX;
         this.posY = posY;
         this.type = type;
-        if (type == Buildable.Accommodation) {
+        if (type == BuildingType.Accommodation) {
             sprite = new Sprite(Assets.accommodationTexture);
-            width = Accommodation.getWidth();
-            height = Accommodation.getHeight();
+            width = 2;
+            height = 2;
         }
-        else if (type == Buildable.LectureTheatre) {
+        else if (type == BuildingType.LectureTheatre) {
             sprite = new Sprite(Assets.lectureTheatreTexture);
-            width = LectureTheatre.getWidth();
-            height = LectureTheatre.getHeight();
+            width = 3;
+            height = 3;
         }
         else {
             sprite = new Sprite(Assets.couldNotLoad);
@@ -60,8 +63,11 @@ public class DrawableBuilding {
     public Sprite getSprite() {
         return sprite;
     }
-    public Buildable getType() {
+    public BuildingType getType() {
         return type;
+    }
+    public int getId() {
+        return ID;
     }
     public void setPos(int posX, int posY) {
         this.posX = posX;

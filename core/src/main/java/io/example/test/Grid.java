@@ -43,6 +43,13 @@ public class Grid {
         return height;
     }
 
+    public boolean isBuildingAtPoint(int posX, int posY) {
+        TileType tile = getTile(posX, posY);
+        if (tile == null) return false;
+        if (tile == TileType.Building || tile == TileType.BuildingBL) return true;
+        return false;
+    }
+
     // Returns true if the coordinates are located within the grid.
     public boolean posWithinGrid(int posX, int posY) {
         if (posX < 0 || posY < 0) return false;
@@ -193,6 +200,7 @@ public class Grid {
     // Finds a valid path between a start point and an end point. Will return null if
     // the path is not possible.
     public ArrayList<Vector2i> findPath(Vector2i start, Vector2i end) {
+        
         // Uses BFS algorithm. Optimisations can be made.
         if (isWalkable(start.x, start.y) == false) return null;
         if (isWalkable(end.x, end.y) == false) return null;

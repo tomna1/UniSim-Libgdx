@@ -10,10 +10,6 @@ import io.example.test.Grid.TileType;
 // be able to using pathing algorithms to find paths for students. ALL LOGIC GOES
 // INTO THE GAMEMANAGER CLASS. CHANGE THIS CLASS TO INHERIT GRID CLASS.
 public class GameMap {
-    // A gamemap needs to store:
-    //      The buildings on the gamemap
-    //      Whether a specific 
-
     // Used to draw all buildings.
     private ArrayList<DrawableBuilding> buildings;
 
@@ -21,14 +17,17 @@ public class GameMap {
     // algorithms take place.
     private Grid grid;
     
-    private int selectedBuildingPosX;
-    private int selectedBuildingPosY;
+
+    private UniqueIDGiver buildingIDGiver = new UniqueIDGiver();
 
     // Everything that can be built in the map.
-    public enum Buildable {
+    public enum BuildingType {
         LectureTheatre, 
         Accommodation,
         Restaurant,
+    }
+    public enum Buildable {
+        Building,
         Path
     }
 
@@ -43,14 +42,18 @@ public class GameMap {
     public boolean isTileWalkable(int posX, int posY) {
         return grid.isWalkable(posX, posY);
     }
+    public boolean isBuildingAtPoint(int posX, int posY) {
+        return grid.isBuildingAtPoint(posX, posY);
+    }
     public boolean posWithinMap(int posX, int posY) {
         return grid.posWithinGrid(posX, posY);
     }
-    public ArrayList<Vector2i> getAllPaths() {
-        return grid.getAllPaths();
-    }
     public ArrayList<Vector2i> findPath(Vector2i start, Vector2i end) {
         return grid.findPath(start, end);
+    }
+
+    public boolean addPath(int posX, int posY) {
+        return grid.addPath(posX, posY);
     }
 
     // returns the index of a building in buildings at a particular point
@@ -79,72 +82,69 @@ public class GameMap {
         return -1;
     }
 
-    // adds a buildable to the map. Returns true if successfully added and false
-    // otherwise.
-    boolean addBuildable(Buildable type, int posX, int posY) {
-        if (type == Buildable.Path) {
-            Vector2i pos = new Vector2i(posX, posY);
-            return grid.addPath(pos.x, pos.y);
+    // adds a buildable to the map. Returns -1 if not successfully added. Returns
+    // the building ID if successfully added.
+    int addBuilding(BuildingType type, int posX, int posY) {
+        int newID = buildingIDGiver.next();
+        if (type == BuildingType.Accommodation) {
+            DrawableBuilding building = new DrawableBuilding(newID, posX, posY, type);
+            if (grid.addBuilding(building) == false) {
+                buildingIDGiver.returnID(newID);
+                return -1;
+            }
+            buildings.add(building);
+            return newID;
+        }
+        else if (type == BuildingType.LectureTheatre) {
+            DrawableBuilding building = new DrawableBuilding(newID, posX, posY, type);
+            if (grid.addBuilding(building) == false) {
+                buildingIDGiver.returnID(newID);
+                return -1;
+            }
+            buildings.add(building);
+            return newID;
         }
         
-        if (type == Buildable.Accommodation) {
-            DrawableBuilding building = new DrawableBuilding(posX, posY, type);
-            if (grid.containsSpace(building) == false) return false;
-            if (grid.addBuilding(building) == false) return false;
-            buildings.add(building);
-            return true;
-        }
-        else if (type == Buildable.LectureTheatre) {
-            DrawableBuilding building = new DrawableBuilding(posX, posY, type);
-            if (grid.addBuilding(building) == false) return false;
-            buildings.add(building);
-            return true;
-        }
-        
-        return false;
+        return -1;
     }
 
-    boolean selectBuilding(int posX, int posY) {
-        selectedBuildingPosX = posX;
-        selectedBuildingPosY = posY;
-        return false;
-    }
-
-    boolean moveSelectedBuilding(int posX, int posY) {
-        // TODO: this
-        return true;
-    }
-
-
-    boolean removeSelectedBuilding() {
-        int index = indexOfBuildingAtPoint(selectedBuildingPosX, selectedBuildingPosY);
-        if (index == -1) return false;
-
-        if (grid.removeBuilding(buildings.get(index)) == false) return false;
-        buildings.remove(index);
-        return true;
-    }
-
-    // Removes a buildable from the map where the building is at the point pos.
-    public boolean removeBuildableAtPoint(int posX, int posY) {
+    // Removes a buildable from the map where the building is at the point pos. Returns -1
+    // if unsuccessful and the buildingID of the removed building if successful.
+    public int removeBuildableAtPoint(int posX, int posY) {
         // Checks if the tile contains a non removeable.
         TileType tile = grid.getTile(posX, posY);
         if (tile == TileType.Empty || tile == TileType.River || tile == TileType.Road) {
-            return false;
+            return -1;
         }
         // If the tile contains a path, remove it.
         if (tile == TileType.Path) {
-            return grid.removePath(posX, posY);
+            if (grid.removePath(posX, posY) == false) return -1;
         }
         
         
         // Removes the building
         int index = indexOfBuildingAtPoint(posX, posY);
-        if (index == -1) return false;
+        if (index == -1) return -1;
 
-        if (grid.removeBuilding(buildings.get(index)) == false) return false;
+        int buildID = buildings.get(index).getId();
+        if (grid.removeBuilding(buildings.get(index)) == false) return -1;
         buildings.remove(index);
-        return true;
+        buildingIDGiver.returnID(buildID);
+        return buildID;
+    }
+
+    // Returns -1 if there is no building at point. Returns the building ID of whatever is
+    // at the point (posX, posY).
+    public int getBuildIdAtPoint(int posX, int posY) {
+        int index = indexOfBuildingAtPoint(posX, posY);
+        if (index == -1) return -1;
+        else return buildings.get(index).getId();
+    }
+
+    public BuildingType getBuildTypeAtPoint(int posX, int posY) {
+        int index = indexOfBuildingAtPoint(posX, posY);
+        if (index == -1) return null;
+        return buildings.get(index).getType();
     }
 
     public void draw(SpriteBatch batch) {
