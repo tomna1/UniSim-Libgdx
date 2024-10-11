@@ -1,7 +1,7 @@
 package io.example.test;
 
 // A building that students should be able to enter and leave.
-public class Building {
+public abstract class Building {
     private int ID;
 
     // how many students can fit in building
@@ -17,6 +17,7 @@ public class Building {
         studentsInBuilding = new int[studentCapacity];
     }
 
+    // Each accommodation type should have its own capcity.
     public short getCapacity() {
         return studentCapacity;
     }

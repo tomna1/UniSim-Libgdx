@@ -1,6 +1,5 @@
 package io.example.test;
 
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.example.test.GameMap.BuildingType;

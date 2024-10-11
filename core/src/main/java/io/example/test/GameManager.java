@@ -137,7 +137,7 @@ public class GameManager {
                     Vector2i homePos = new Vector2i((int)touchPos.x, (int)touchPos.y);
                     Accommodation build = new Accommodation(buildID);
                     int studentID;
-                    for (int i = 0; i < Accommodation.getStudentSize(); i++) {
+                    for (int i = 0; i < build.getCapacity(); i++) {
                         studentID = studentIDGiver.next();
                         Student stu = new Student(studentID,"", getRandomColour(), buildID, homePos.x, homePos.y);
                         students.add(stu);

@@ -16,6 +16,8 @@ public class Assets {
     public static Texture grassTile;
     public static Texture pathTile;
 
+    private Assets() {};
+
 
     public static void loadTextures() {
         couldNotLoad = new Texture("misc/couldnot_load.png");
