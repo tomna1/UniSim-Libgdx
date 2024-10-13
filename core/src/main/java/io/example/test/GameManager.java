@@ -4,13 +4,10 @@ import java.util.ArrayList;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g3d.particles.values.UnweightedMeshSpawnShapeValue;
 import com.badlogic.gdx.math.Vector2;
 
-import io.example.test.GameMap.Buildable;
-import io.example.test.GameMap.BuildingType;
+import io.example.test.Building.BuildingType;
 
 // Game manager holds all the logic of the game i guess idk.
 public class GameManager {
@@ -21,35 +18,21 @@ public class GameManager {
         ORANGE,
         PURPLE
     }
+
     // Each colour represents a university course/department. A student which has
     // the colour red can only attend lectures which also have the colour red.
-    private ArrayList<Colours> activatedColours;
+    private static ArrayList<Colours> activatedColours;
 
     private BuildingType selectedBuilding = BuildingType.Accommodation;
-    private Buildable selectedBuildable = Buildable.Building;
-    // How long the game manager should wait before updating the meters of each
-    // student.
-    private static final float timeBetweenStudentMeterUpdates = 1.0f;
+    private boolean isPathSelected = false;
 
     // how much money the player has.
-    private int money;
+    private int money = 1000;
 
-    // the satisfaction a student gain from learning. more learning = more satisfaction.
-    public float studentLearningSatisfaction;
-    // the satisfaction a student gains from travelling. shorts journeys = more satisfaction,
-    // long journeys = less satisfaction.
-    public float studentDistanceTravelledSatisfaction;
-
-
+    // The map that the game takse place on.
     private GameMap gameMap;
 
-    // could be implemented as a hashmap instead
-    private ArrayList<Student> students;
-    
-    // could be implemented as a hashmap instead.
-    private ArrayList<Building> buildings = new ArrayList<>();
-
-    private UniqueIDGiver studentIDGiver = new UniqueIDGiver();
+    private StudentManager stuMan;
     
 
     // used for managing deltatime between update calls.
@@ -60,27 +43,25 @@ public class GameManager {
         activatedColours = new ArrayList<Colours>();
         activatedColours.add(Colours.RED);
         activatedColours.add(Colours.BLUE);
-        money = 1000;
-        studentDistanceTravelledSatisfaction = 100.0f;
-        studentLearningSatisfaction = 100.0f;
-        students = new ArrayList<Student>();
+        stuMan = new StudentManager();
     }
 
     // This method should be called directly after the game manager is instantiated. 
     // Can only be called once.
     public void generateMap(int width, int height) {
-        if (gameMap == null) gameMap = new GameMap(width, height);
+        if (gameMap == null) gameMap = new GameMap(stuMan, width, height);
+        stuMan.useMap(gameMap);
     }
 
-    public void activateColour(Colours colour) {
+    public static void activateColour(Colours colour) {
         if (activatedColours.contains(colour)) return;
         activatedColours.add(colour);
     }
-    public boolean isColourActivated(Colours colour) {
+    public static boolean isColourActivated(Colours colour) {
         if (activatedColours.contains(colour)) return true;
         return false;
     }
-    public Colours getRandomColour() {
+    public static Colours getRandomColour() {
         return Colours.RED;
     }
 
@@ -98,12 +79,6 @@ public class GameManager {
         return false;
     }
 
-    // returns the overall satisfaction.
-    public float getSatisfaction() {
-        return (studentLearningSatisfaction + studentDistanceTravelledSatisfaction) / 2;
-    }
-
-
     // ALL INPUT STUFF GOES HERE
     public void processInput(Vector2 touchPos) {
         // touch pos should be the world coordinates, not screen coordinates. 
@@ -111,97 +86,41 @@ public class GameManager {
         // use 1 to select accommodation and 2 to select path, 3 to select lecture
         // theatre.
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
-            selectedBuildable = Buildable.Building;
+            isPathSelected = false;
             selectedBuilding = BuildingType.Accommodation;
         } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_2)) {
-            selectedBuildable = Buildable.Path;
+            isPathSelected = true;
         } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_3)) {
-            selectedBuildable = Buildable.Building;
+            isPathSelected = false;
             selectedBuilding = BuildingType.LectureTheatre;
         } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_4)) {
-            if (students.size() != 0) {
-                Vector2i pos = new Vector2i((int)touchPos.x, (int)touchPos.y);
-                students.get(0).travelTo(gameMap, pos);
-            } 
+            
         }
         
         // If left click, add the selected buildable.
         if (Gdx.input.isButtonPressed(Input.Buttons.LEFT)) {
-            if (selectedBuildable == Buildable.Path) {
+            if (isPathSelected) {
                 gameMap.addPath((int)touchPos.x, (int)touchPos.y);
             } 
             else {
-                int buildID = gameMap.addBuilding(selectedBuilding, (int)touchPos.x, (int)touchPos.y);
-                
-                if (selectedBuilding == BuildingType.Accommodation && buildID != -1) {
-                    Vector2i homePos = new Vector2i((int)touchPos.x, (int)touchPos.y);
-                    Accommodation build = new Accommodation(buildID);
-                    int studentID;
-                    for (int i = 0; i < build.getCapacity(); i++) {
-                        studentID = studentIDGiver.next();
-                        Student stu = new Student(studentID,"", getRandomColour(), buildID, homePos.x, homePos.y);
-                        students.add(stu);
-                        build.addStudent(studentID);
-                    }
-                    buildings.add(build);
-                } 
-                
-                else if (selectedBuilding == BuildingType.LectureTheatre && buildID != 0) {
-
-                }
+                gameMap.addBuilding(selectedBuilding, (int)touchPos.x, (int)touchPos.y);
             }
         }
         // If right click, remove building.
         else if (Gdx.input.isButtonPressed(Input.Buttons.RIGHT)) {
             Vector2i pos = new Vector2i((int)touchPos.x, (int)touchPos.y);
-            if (gameMap.isBuildingAtPoint(pos.x, pos.y) == false) {
-                // removes that path at the point
-                gameMap.removeBuildableAtPoint(pos.x, pos.y);
-                return;
-            } 
-            
-            BuildingType type = gameMap.getBuildTypeAtPoint(pos.x, pos.y);
-            int buildId = gameMap.removeBuildableAtPoint(pos.x, pos.y);
-            // System.out.println("buildID = " + buildId);
-            if (type == BuildingType.Accommodation) {
-                for (int i = 0; i < students.size(); i++) {
-                    // System.out.println("homeID = " + students.get(i).getHomeId());
-                    if (students.get(i).getHomeId() == buildId) {
-                        studentIDGiver.returnID(students.get(i).getId());
-                        students.remove(i);
-                        i--;
-                    }
-                }
-            }
+            gameMap.removeBuildableAtPoint(pos.x, pos.y);
         }
     }
 
-    // updates all the necessary stats.
+    
     public void update(float deltaTime) {
-        totalDeltaTime += deltaTime;
-        boolean updateMeters = false;
-        if (totalDeltaTime > timeBetweenStudentMeterUpdates) {
-            updateMeters = true;
-            totalDeltaTime = 0.0f;
-        }
-        for (Student stu : students) {
-            stu.update(deltaTime, updateMeters);
-        }
+        stuMan.update(deltaTime);
     }
 
-
-    private void drawStudents(SpriteBatch batch) {
-        if (students.size() == 0) return;
-        for (Student stu : students) {
-            stu.draw(batch);
-        }
-    }
 
     public void draw(SpriteBatch batch) {
         gameMap.draw(batch);
-        drawStudents(batch);
+        stuMan.drawStudents(batch);
     }
-
-
-
 }

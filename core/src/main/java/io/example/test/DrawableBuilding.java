@@ -2,7 +2,7 @@ package io.example.test;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import io.example.test.GameMap.BuildingType;
+import io.example.test.Building.BuildingType;
 
 // This class should only be used in the gameMap class. It represents a drawable building.
 public class DrawableBuilding {
@@ -40,24 +40,12 @@ public class DrawableBuilding {
        
     }
 
-    public int getPosX() {
-        return posX;
-    }
-    public int getPosY() {
-        return posY;
-    }
-    public int getWidth() {
-        return width;
-    }
-    public int getHeight() {
-        return height;
-    }
-    public BuildingType getType() {
-        return type;
-    }
-    public int getId() {
-        return ID;
-    }
+    public int getPosX() { return posX; }
+    public int getPosY() { return posY; }
+    public int getWidth() { return width; }
+    public int getHeight() { return height; }
+    public BuildingType getType() { return type; }
+    public int getId() { return ID; }
     public void setPos(int posX, int posY) {
         this.posX = posX;
         this.posY = posY;

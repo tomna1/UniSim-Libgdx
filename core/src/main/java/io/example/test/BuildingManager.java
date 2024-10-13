@@ -1,5 +1,0 @@
-package io.example.test;
-
-public class BuildingManager {
-    
-}

@@ -28,18 +28,18 @@ public class Student {
     private Vector2f pos;
 
     // Building ID of the students home.
-    private int homeID;
+    private Vector2i homePos;
 
     // Whichever meter is lowest will determine what the student does next. All
     // meters decrease over time and increase when the student does a certain thing.
-    // All meters should be between 0 and 100 as percentages.
+    // All meters should be between 0 and 200 inclusively.
 
     // Learning meter is increased when a student is in a lecture or library. 
-    private float learningMeter = 100.0f;
+    private float learningMeter = 200.0f;
     // Increase when the student eats.
-    private float hungerMeter = 100.0f;
+    private float hungerMeter = 200.0f;
     // Increases when the student sleeps at their home.
-    private float sleepMeter = 100.0f;
+    private float sleepMeter = 200.0f;
 
 
     // The points that would move the student to the building.
@@ -50,6 +50,11 @@ public class Student {
     // how long until the student finishes what they are currently doing.
     private float timeUntilFree;
 
+    // what the student wants to do next. aka after travelling to a lecture hall
+    // they want to learn.
+    private Status next = Status.Free;
+
+
     public enum Status {
         Free,
         Eating,
@@ -58,45 +63,29 @@ public class Student {
         Travelling
     }
     
-    Student(int ID, String name, Colours colour, int homeID, int posX, int posY) {
+    Student(int ID, String name, Colours colour, Vector2i homePos) {
         this.ID = ID;
         this.name = name;
         this.colour = colour;
-        pos = new Vector2f(posX, posY);
-        this.homeID = homeID;
+        pos = new Vector2f(homePos.x, homePos.y);
+        this.homePos = homePos;
         sprite = new Sprite(Assets.studentTexture);
         sprite.setSize(1, 1);
     }
 
     // standard getters.
 
-    public float getPosX() {
-        return pos.x;
-    }
-    public float getPosY() {
-        return pos.y;
-    }
-    public String getName() {
-        return name;
-    }
-    public Colours getColour() {
-        return colour;
-    }
-    public float getSleepMeter() {
-        return sleepMeter;
-    }
-    public float getHungerMeter() {
-        return hungerMeter;
-    }
+    public int getId() { return ID; }
+    public Vector2i getHomePos() { return homePos; }
+    public float getPosX() { return pos.x; }
+    public float getPosY() { return pos.y; }
+    public String getName() { return name; }
+    public Colours getColour() { return colour; }
 
-    public float getLearningMeter() {
-        return learningMeter;
+    public void setNewHome(Vector2i homePos) {
+        this.homePos = homePos;
     }
-
-    public int getId() {
-        return ID;
-    }
-
+    
 
     public boolean isFree() {
         if (status == Status.Free) {
@@ -105,12 +94,32 @@ public class Student {
         return false;
     }
 
-    public void setNewHome(int homeID) {
-        this.homeID = homeID;
+    public boolean isHungry() {
+        if (hungerMeter <= 100) return true;
+        return false;
     }
-    public int getHomeId() {
-        return homeID;
+
+    public boolean isSleepy() {
+        if (sleepMeter <= 100) return true;
+        return false;
     }
+
+    public boolean wantsToLearn() {
+        if (learningMeter <= 100) return true;
+        return false;
+    }
+
+    public float getSatisfaction() {
+        float hungerSatisfaction = hungerMeter;
+        if (hungerSatisfaction > 100) hungerSatisfaction = 100;
+        float sleepSatisfaction = sleepMeter;
+        if (sleepSatisfaction > 100) sleepSatisfaction = 100;
+        float learningSatisfaction = learningMeter;
+        if (learningSatisfaction > 100) learningSatisfaction = 100;
+        
+        return (hungerSatisfaction + sleepSatisfaction + learningSatisfaction) / 3;
+    }
+
 
     // Will make the student sleep for that set amount of time.
     public void sleep(float time) {
@@ -128,6 +137,7 @@ public class Student {
     }
 
 
+
     // Will make sure that all meters are within the 0-100 range inclusively.
     private void validateMeters() {
         if (learningMeter < 0) learningMeter = 0;
@@ -141,7 +151,7 @@ public class Student {
     }
 
     // Will apply loss to the meters specified in the function. Will make sure that no meters go lower than 0.
-    // This function should be called every 10 seconds.
+    // This function should be called every 10 seconds. 
     public void applyMeterLoss(boolean learningMeter, boolean sleepMeter, boolean hungerMeter) {
         if (learningMeter) {
             this.learningMeter += learningMeterLoss;
@@ -159,6 +169,7 @@ public class Student {
     // update function will update all the meter associated with the student and move
     // the student if they are travelling.
     public void update(float deltaTime, boolean updateMeters) {
+        // updates the internal meters of the student
         if (updateMeters) {
             applyMeterLoss(true, true, true);
             if (status == Status.Eating) hungerMeter += hungerMeterGain;
@@ -167,6 +178,20 @@ public class Student {
             validateMeters();
         }
 
+        if (status == Status.Free) {
+            // decide what to do next.
+            if (isHungry()) {
+                // NEEDS TO FIND THE NEAREST PLACE TO EAT THAT ISNT FULL
+            }
+            else if (isSleepy()) {
+                // NEEDS TO FIND A PATH HOME AND GO SLEEP
+            }
+            else if (wantsToLearn()) {
+                //
+            }
+        }
+
+        // moves the student.
         if (status == Status.Travelling) {
             move(deltaTime);
         }
@@ -179,7 +204,7 @@ public class Student {
     }
 
     
-    // Moves the student based on the path 
+    // Moves the student based on the path. Should only be called by the update method.
     private void move(float deltaTime) {
         if (path.size() == 0) {
             status = Status.Free;
@@ -231,19 +256,13 @@ public class Student {
     // start travelling when they are free.
     public boolean travelTo(GameMap gameMap, Vector2i point) {
         if (status != Status.Free) return false;
-        if (findPath(gameMap, point) == false) return false;
-        status = Status.Travelling;
-        return true;
-    }
-
-    private boolean findPath(GameMap gameMap, Vector2i point) {
         Vector2i charPos = new Vector2i((int)pos.x, (int)pos.y);
         ArrayList<Vector2i> path = gameMap.findPath(charPos, point);
         if (path == null) return false;
-        else {
-            this.path = path;
-            return true;
-        }
+        
+        this.path = path;
+        status = Status.Travelling;
+        return true;
     }
 
     // Draws student
@@ -252,6 +271,4 @@ public class Student {
         sprite.setY(pos.y);
         sprite.draw(batch);
     }
-    
-    
 }

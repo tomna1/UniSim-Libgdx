@@ -33,7 +33,9 @@ public class UniqueIDGiver {
 
     // Returns an ID back to the IDgiver.
     public void returnID(int ID) {
-        nums.add(ID);
+        if (nums.contains(ID) == false && nums.peek() > ID) {
+            nums.add(ID);
+        }
     }
 
     // Returns true if at least one more valid ID can be given.
