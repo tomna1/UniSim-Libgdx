@@ -2,6 +2,7 @@ package io.example.test;
 
 import java.util.ArrayList;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
@@ -16,6 +17,9 @@ public class Student {
     private static final float learningMeterLoss = -1.0f;
     private static final float hungerMeterLoss = -1.0f;
     private static final float sleepMeterLoss = -1.0f;
+
+
+    private GameMap gameMap;
 
     private int ID;
     private Colours colour;
@@ -63,7 +67,7 @@ public class Student {
         Travelling
     }
     
-    Student(int ID, String name, Colours colour, Vector2i homePos) {
+    Student(GameMap gameMap, int ID, String name, Colours colour, Vector2i homePos) {
         this.ID = ID;
         this.name = name;
         this.colour = colour;
@@ -71,6 +75,7 @@ public class Student {
         this.homePos = homePos;
         sprite = new Sprite(Assets.studentTexture);
         sprite.setSize(1, 1);
+        this.gameMap = gameMap;
     }
 
     // standard getters.
@@ -126,6 +131,9 @@ public class Student {
         if (status == Status.Free) {
             status = Status.Sleeping;
             timeUntilFree = time;
+            if (Consts.STUDENT_LIFE_DEBUG_MODE_ON) {
+                Gdx.app.log("Student", "Student " + ID + " is now sleeping for " + time + " seconds.");
+            }
         }
     }
     // Will make the student eat for that amount of time.
@@ -133,6 +141,9 @@ public class Student {
         if (status == Status.Free) {
             status = Status.Eating;
             timeUntilFree = time;
+            if (Consts.STUDENT_LIFE_DEBUG_MODE_ON) {
+                Gdx.app.log("Student", "Student " + ID + " is now eating for " + time + " seconds.");
+            }
         }
     }
 
@@ -189,6 +200,10 @@ public class Student {
             else if (wantsToLearn()) {
                 //
             }
+            Vector2i point = gameMap.getRandomPathPoint();
+            if (point != null) {
+                travelTo(point);
+            }
         }
 
         // moves the student.
@@ -207,6 +222,9 @@ public class Student {
     // Moves the student based on the path. Should only be called by the update method.
     private void move(float deltaTime) {
         if (path.size() == 0) {
+            if (Consts.STUDENT_LIFE_DEBUG_MODE_ON) {
+                Gdx.app.log("Student", "Student " + ID + " is now free.");
+            }
             status = Status.Free;
             return;
         }
@@ -254,7 +272,7 @@ public class Student {
 
     // Tells the student to travel to a specific point on a map. A student can only
     // start travelling when they are free.
-    public boolean travelTo(GameMap gameMap, Vector2i point) {
+    public boolean travelTo(Vector2i point) {
         if (status != Status.Free) return false;
         Vector2i charPos = new Vector2i((int)pos.x, (int)pos.y);
         ArrayList<Vector2i> path = gameMap.findPath(charPos, point);
@@ -262,6 +280,9 @@ public class Student {
         
         this.path = path;
         status = Status.Travelling;
+        if (Consts.STUDENT_LIFE_DEBUG_MODE_ON) {
+            Gdx.app.log("Student", "Student " + ID + " is now travelling to " + point.toString());
+        }
         return true;
     }
 

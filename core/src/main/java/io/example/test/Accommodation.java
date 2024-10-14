@@ -1,6 +1,5 @@
 package io.example.test;
 
-// Non drawable object
 public class Accommodation extends Building {
     // The IDS of students this building is home to.
     private int[] homeTo;

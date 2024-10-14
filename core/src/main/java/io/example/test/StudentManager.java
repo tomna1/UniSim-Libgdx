@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.Gdx;
 
 // This is the class where all the students are stored and updated. This
 // is where all the logic for the students go. 
@@ -13,9 +14,6 @@ public class StudentManager {
 
     // used for managing deltatime between update calls.
     float totalDeltaTime = 0.0f;
-    // How long the manager should wait before updating the meters of each
-    // student.
-    private static final float timeBetweenStudentMeterUpdates = 1.0f;
 
     GameMap gameMap;
 
@@ -25,13 +23,19 @@ public class StudentManager {
     // This method should be called before any other methods can be called.
     public void useMap(GameMap gameMap) { this.gameMap = gameMap;}
 
+    public int count() { return students.size(); }
+
     // Returns the studentID if it has been successfully added and returns -1 if not.
     public int addStudent(Vector2i homePos) {
         int id = IDGiver.next();
         if (id == 0) {
             return -1;
         }
-        Student student = new Student(id, "", GameManager.getRandomColour(), homePos);
+        if (Consts.STUDENT_LIFE_DEBUG_MODE_ON) {
+            Gdx.app.log("StudentManager", "Adding new Student " + id);
+        }
+        Student student = new Student(gameMap, id, "", GameManager.getRandomColour(), homePos);
+        GameManager.addMoney(Consts.MONEY_PER_STUDENT_JOINING);
         students.put(id, student);
         return id;
     }
@@ -42,6 +46,9 @@ public class StudentManager {
             return;
         }
         IDGiver.returnID(studentID);
+        if (Consts.STUDENT_LIFE_DEBUG_MODE_ON) {
+            Gdx.app.log("StudentManager", "removing  Student " + studentID);
+        }
         students.remove(studentID);
     }
 
@@ -59,7 +66,7 @@ public class StudentManager {
     public void update(float deltaTime) {
         totalDeltaTime += deltaTime;
         boolean updateMeters = false;
-        if (totalDeltaTime > timeBetweenStudentMeterUpdates) {
+        if (totalDeltaTime > Consts.TIME_BETWEEN_STUDENT_UPDATES) {
             updateMeters = true;
             totalDeltaTime = 0.0f;
         }

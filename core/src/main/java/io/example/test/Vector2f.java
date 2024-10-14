@@ -36,4 +36,10 @@ public class Vector2f {
         if (this.x == r.x && this.y == r.y) return true;
         return false;
     }
+
+    @Override
+    public String toString() {
+        String output = "(" + x + "," + y + ")";
+        return output;
+    }
 }

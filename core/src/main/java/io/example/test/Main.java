@@ -1,5 +1,6 @@
 package io.example.test;
 
+import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Camera;
@@ -22,9 +23,6 @@ public class Main extends ApplicationAdapter {
 
     Vector2 touchPos;
 
-    static final int gridWidth = 20;
-    static final int gridHeight = 20;
-
     GameManager gameManager;
 
     // Called once at the start of the game.
@@ -33,18 +31,25 @@ public class Main extends ApplicationAdapter {
         Assets.loadTextures();
         batch = new SpriteBatch();
         // TODO: Fix the viewport
-        viewport = new ExtendViewport(gridWidth, gridHeight);
+        viewport = new ExtendViewport(Consts.GRID_WIDTH, Consts.GRID_HEIGHT);
 
         // used for input.
         touchPos = new Vector2();
 
         // manager
         gameManager = new GameManager();
-        gameManager.generateMap(gridWidth, gridHeight);
+        gameManager.generateMap(Consts.GRID_WIDTH, Consts.GRID_HEIGHT);
 
         // sound
         dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.mp3"));
         music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
+
+        if (Consts.DEBUG_MODE_ON) {
+            Gdx.app.setLogLevel(Application.LOG_INFO);
+        } else {
+            Gdx.app.setLogLevel(Application.LOG_NONE);
+        }
+         
     }
 
     @Override

@@ -1,5 +1,6 @@
 package io.example.test;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import java.util.Queue;
@@ -9,13 +10,11 @@ import java.util.LinkedList;
 // A grid contains informtion about each specific tile in the game.
 // Will be used to check if a building can be added to the map or not.
 public class Grid {
-    // defines the max amount of nodes a pathfinding algorithm should check.
-    private static final int MAX_NODES_CHECKED = 200;
-    
     private TileType[][] tiles;
     
     private int width;
     private int height;
+
 
     public enum TileType {
         Empty,
@@ -38,12 +37,8 @@ public class Grid {
         this.height = height;
     }
 
-    public int getWidth() {
-        return width;
-    }
-    public int getHeight() {
-        return height;
-    }
+    public int getWidth() { return width; }
+    public int getHeight() { return height; }
 
     public boolean isBuildingAtPoint(Vector2i pos) {
         TileType tile = getTile(pos);
@@ -110,6 +105,9 @@ public class Grid {
         if (posWithinGrid(pos) == false) return false;
         if (tiles[pos.y][pos.x] != TileType.Empty) return false;
         tiles[pos.y][pos.x] = TileType.Path;
+        if (Consts.GRID_PLACEMENT_DEBUG_MODE_ON) {
+            Gdx.app.log("Grid", "Adding path at " + pos.toString());
+        }
         return true;
     }
 
@@ -124,6 +122,9 @@ public class Grid {
         if (posWithinGrid(pos) == false) return false;
         if (tiles[pos.y][pos.x] != TileType.Path) return false;
         tiles[pos.y][pos.x] = TileType.Empty;
+        if (Consts.GRID_PLACEMENT_DEBUG_MODE_ON) {
+            Gdx.app.log("Grid", "Removing path at " + pos.toString());
+        }
         return true;
     }
 
@@ -137,15 +138,17 @@ public class Grid {
         int width = b.getWidth();
         int height = b.getHeight();
         // Adds the building
-        for (int i = posY; i < posY + height; i++) {
+        int i = posY;
+        for (int j = posX+1; j < posX + width; j++) {
+            tiles[i][j] = TileType.BuildingB;
+        }
+        
+        for (i = posY+1; i < posY + height; i++) {
             for (int j = posX; j < posX + width; j++) {
-                if (i == (posY + height - 1)) {
-                    tiles[i][j] = TileType.BuildingB;
-                } else {
-                    tiles[i][j] = TileType.Building;
-                }
+                tiles[i][j] = TileType.Building;
             }
         }
+        
         tiles[posY][posX] = TileType.BuildingBL;
         return true;
     }
@@ -162,18 +165,6 @@ public class Grid {
 
         int width = b.getWidth();
         int height = b.getHeight();
-        if (width == 1 && height == 1) {
-            tiles[posY][posX] = TileType.Empty;
-            return true;
-        }
-
-        // Checks Building dimensions are correct
-        for (int i = posX+1; i < posX + width; i++) {
-            if (tiles[posY][i] != TileType.Building || tiles[posY][i] != TileType.BuildingB) return false;
-        }
-        for (int i = posY+1; i < posY + height; i++) {
-            if (tiles[i][posX] != TileType.Building) return false;
-        }
 
         // Removes all building tiles
         for (int i = posY; i < posY + height; i++) {
@@ -189,6 +180,8 @@ public class Grid {
     // Finds a valid path between a start point and an end point. Will return null if
     // the path is not possible.
     public ArrayList<Vector2i> findPath(Vector2i start, Vector2i end) {
+        // TODO: OPTIMISE, A*.
+        
         // Uses BFS algorithm. Optimisations can be made.
         if (isWalkable(start) == false) return null;
         if (isWalkable(end) == false) return null;
@@ -205,12 +198,15 @@ public class Grid {
             }
         }
 
+        // Gdx.app.log("Grid", "Finding path between " + start.toString() + " and " + end.toString());
+
         // This will be used to decide which path tile to visit next.
         Queue<Vector2i> nodeQueue = new LinkedList<>();
         nodeQueue.add(start);
 
         while (nodeQueue.size() > 0) {
            Vector2i node = nodeQueue.poll();
+           Vector2i neighbour = new Vector2i(node);
             if (node.equals(end)) {
                 // construct the completed path.
                 ArrayList<Vector2i> path = new ArrayList<>();
@@ -219,53 +215,60 @@ public class Grid {
                     node = prevNode[node.y][node.x];
                 }
                 path.add(0, node);
+                if (Consts.PATHFINDING_DEBUG_MODE_ON) {
+                    Gdx.app.log("Grid", "Found path between " + start.toString() + " and " + end.toString());
+                }
                 return path;
             } 
 
             // Checks left neighbour
-            node.x--;
-            if (getTile(node) == TileType.Path) {
-                if (isVisited[node.y][node.x] == false) {
-                    nodeQueue.add(new Vector2i(node));
-                    prevNode[node.y][node.x] = node;
-                    isVisited[node.y][node.x] = true;
+            neighbour.x--;
+            if (getTile(neighbour) == TileType.Path) {
+                if (isVisited[neighbour.y][neighbour.x] == false) {
+                    nodeQueue.add(new Vector2i(neighbour));
+                    prevNode[neighbour.y][neighbour.x] = node;
+                    isVisited[neighbour.y][neighbour.x] = true;
                 }
             }
-            node.x++;
+            neighbour.x++;
             // Checks right neighbour
-            node.x++;
-            if (getTile(node) == TileType.Path) {
-                if (isVisited[node.y][node.x] == false) {
-                    nodeQueue.add(new Vector2i(node));
-                    prevNode[node.y][node.x] = node;
-                    isVisited[node.y][node.x] = true;
+            neighbour.x++;
+            if (getTile(neighbour) == TileType.Path) {
+                if (isVisited[neighbour.y][neighbour.x] == false) {
+                    nodeQueue.add(new Vector2i(neighbour));
+                    prevNode[neighbour.y][neighbour.x] = node;
+                    isVisited[neighbour.y][neighbour.x] = true;
                 }
             }
-            node.x--;
+            neighbour.x--;
             // Checks up neighbour
-            node.y--;
-            if (getTile(node) == TileType.Path) {
-                if (isVisited[node.y][node.x] == false) {
-                    nodeQueue.add(new Vector2i(node));
-                    prevNode[node.y][node.x] = node;
-                    isVisited[node.y][node.x] = true;
+            neighbour.y++;
+            if (getTile(neighbour) == TileType.Path) {
+                if (isVisited[neighbour.y][neighbour.x] == false) {
+                    nodeQueue.add(new Vector2i(neighbour));
+                    prevNode[neighbour.y][neighbour.x] = node;
+                    isVisited[neighbour.y][neighbour.x] = true;
                 }
             }
-            node.y--;
+            neighbour.y--;
             // Checks down neighbour
-            node.y--;
-            if (getTile(node) == TileType.Path) {
-                if (isVisited[node.y][node.x] == false) {
-                    nodeQueue.add(new Vector2i(node));
-                    prevNode[node.y][node.x] = node;
-                    isVisited[node.y][node.x] = true;
+            neighbour.y--;
+            if (getTile(neighbour) == TileType.Path) {
+                if (isVisited[neighbour.y][neighbour.x] == false) {
+                    nodeQueue.add(new Vector2i(neighbour));
+                    prevNode[neighbour.y][neighbour.x] = node;
+                    isVisited[neighbour.y][neighbour.x] = true;
                 }
             }
-            node.y++;
+            neighbour.y++;
         }
 
         // If here is reached, that means all valid nodes have been checked.
+        if (Consts.PATHFINDING_DEBUG_MODE_ON) {
+            Gdx.app.log("Grid", "Could not find path between " + start.toString() + " and " + end.toString());
+        }
         return null;
+        
     }
 
 

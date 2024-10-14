@@ -27,7 +27,7 @@ public class GameManager {
     private boolean isPathSelected = false;
 
     // how much money the player has.
-    private int money = 1000;
+    private static int _money = 1000;
 
     // The map that the game takse place on.
     private GameMap gameMap;
@@ -66,16 +66,16 @@ public class GameManager {
     }
 
 
-    public int addMoney(int money) {
-        this.money += money;
-        return this.money;
+    public static int addMoney(int money) {
+        _money += money;
+        return _money;
     }
-    public int removeMoney(int money) {
-        this.money -= money;
-        return this.money;
+    public static int removeMoney(int money) {
+        _money -= money;
+        return _money;
     }
     public boolean isBankrupt() {
-        if (money < 0) return true;
+        if (_money < 0) return true;
         return false;
     }
 

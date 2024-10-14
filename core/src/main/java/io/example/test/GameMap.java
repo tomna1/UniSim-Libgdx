@@ -3,15 +3,15 @@ package io.example.test;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.example.test.Grid.TileType;
 import io.example.test.Building.BuildingType;
 
-// A GameMap is used to draw all of the dBuildings to the screen as well as
-// be able to using pathing algorithms to find paths for students. ALL LOGIC GOES
-// INTO THE GAMEMANAGER CLASS. CHANGE THIS CLASS TO INHERIT GRID CLASS.
+// The gamemap stores all the buildings as well as uses an internal grid for pathfinding.
 public class GameMap {
     private Map<Vector2i, Building> buildings;
 
@@ -19,6 +19,9 @@ public class GameMap {
     // algorithms take place.
     private Grid grid;
 
+    Random rand = new Random();
+
+    // Used to create new students when accommodation is built or destroyed.
     private StudentManager studentManager;
     
 
@@ -43,6 +46,18 @@ public class GameMap {
         return grid.removePath(pos);
     }
 
+    // DELETE LATER.
+    public Vector2i getRandomPathPoint() {
+        for (int i = 0; i < 5; i++) {
+            int posX = rand.nextInt(Consts.GRID_WIDTH+1);
+            int posY = rand.nextInt(Consts.GRID_HEIGHT+1);
+            Vector2i pos = new Vector2i(posX, posY);
+            if (grid.getTile(pos) == TileType.Path) return pos;
+            // System.out.println("random pos = " + pos);
+        }
+        return null;
+    }
+
     public BuildingType getBuildTypeAtPoint(int posX, int posY) {
         Vector2i pos = new Vector2i(posX, posY);
         if (buildings.containsKey(pos) == false) return null;
@@ -60,12 +75,18 @@ public class GameMap {
             if (grid.addBuilding(building) == false) return false;
             building.makeStudentsHome(studentManager);
             buildings.put(pos, building);
+            if (Consts.BUILDING_PLACEMENT_DEBUG_MODE_ON) {
+                Gdx.app.log("GameMap", "Adding " + building.getType() + " at " + pos.toString());
+            }
             return true;
         }
         else if (type == BuildingType.LectureTheatre) {
             LectureTheatre building = new LectureTheatre(pos);
             if (grid.addBuilding(building) == false) return false;
             buildings.put(pos, building);
+            if (Consts.BUILDING_PLACEMENT_DEBUG_MODE_ON) {
+                Gdx.app.log("GameMap", "Adding " + building.getType() + " at " + pos.toString());
+            }
             return true;
         }
         
@@ -94,12 +115,16 @@ public class GameMap {
         }
         if (tile == TileType.BuildingBL) {
             if (buildings.containsKey(pos)) {
-                if (buildings.get(pos).getType() == BuildingType.Accommodation) {
-                    Accommodation acc = (Accommodation)buildings.get(pos);
+                Building building = buildings.get(pos);
+                if (building.getType() == BuildingType.Accommodation) {
+                    Accommodation acc = (Accommodation)building;
                     acc.killEmAll(studentManager);
                 }
                 grid.removeBuilding(buildings.get(pos));
                 buildings.remove(pos);
+                if (Consts.BUILDING_PLACEMENT_DEBUG_MODE_ON) {
+                    Gdx.app.log("GameMap", "Removing " + building.getType() + " at " + pos.toString());
+                }
                 return true;
             }
             return false;
