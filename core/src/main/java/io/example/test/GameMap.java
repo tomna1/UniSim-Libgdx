@@ -99,7 +99,8 @@ public class GameMap {
         Vector2i pos = new Vector2i(posX, posY);
         TileType tile = grid.getTile(pos);
 
-        // All 3 if statements together should remove any building.
+        // All the 3 if statements work to find the bottom left tile of the building
+        // which can be used to remove the building.
         if (tile == TileType.Building) {
             while (tile == TileType.Building) {
                 pos.y--;

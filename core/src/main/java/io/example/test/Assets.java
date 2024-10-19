@@ -18,7 +18,8 @@ public class Assets {
 
     private Assets() {};
 
-
+    // Note that textured cannot be loaded before libgdx has called the create method in
+    // Main.java
     public static void loadTextures() {
         couldNotLoad = new Texture("misc/couldnot_load.png");
         studentTexture = new Texture("misc/student.png");

@@ -1,5 +1,6 @@
 package io.example.test;
 
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 // A building that students should be able to enter and leave.
@@ -17,6 +18,13 @@ public abstract class Building {
     // Used for drawing and casting to the appropriate type.
     protected BuildingType type;
 
+    // used for drawing the accommodation. Texture depends on the type 
+    // of the building and the level of the building.
+    private Texture texture;
+
+    // Each building has a level. Lowest level is 1 and highest level is 3.
+    protected short level;
+
     // how many students can fit in building
     private short studentCapacity;
     // The IDs of students that are in the building.
@@ -24,28 +32,57 @@ public abstract class Building {
     // The current amount of students in the building
     private short studentCount = 0;
 
-    public Building(Vector2i pos, short studentCapacity) {
+    protected Building(Vector2i pos, short studentCapacity, BuildingType type) {
         this.pos = pos;
         this.studentCapacity = studentCapacity;
         students = new int[studentCapacity];
+        this.type = type;
+        if (type == BuildingType.Accommodation) {
+            texture = Assets.accommodationTexture;
+        } else if (type == BuildingType.LectureTheatre) {
+            texture = Assets.lectureTheatreTexture;
+        } else if (type == BuildingType.Restaurant) {
+
+        }
+        level = 1;
     }
 
+    
+    public BuildingType getType() { return type; }  
+
     public int getHeight() {
-        if (type == BuildingType.Accommodation) { return 2; }
-        else if (type == BuildingType.LectureTheatre) { return 3; }
+        if (type == BuildingType.Accommodation) { return Consts.ACCOMMODATION_HEIGHT; }
+        else if (type == BuildingType.LectureTheatre) { return Consts.LECTURE_THEATRE_HEIGHT; }
         else if (type == BuildingType.Restaurant) { return 3; }
         else { return 1; }
     }
     public int getWidth() {
-        if (type == BuildingType.Accommodation) { return 2; }
-        else if (type == BuildingType.LectureTheatre) { return 3; }
+        if (type == BuildingType.Accommodation) { return Consts.ACCOMMODATION_WIDTH; }
+        else if (type == BuildingType.LectureTheatre) { return Consts.LECTURE_THEATRE_WIDTH; }
         else if (type == BuildingType.Restaurant) { return 2; }
         else { return 1; }
     }
 
+    public abstract void upgrade();
+    public abstract void downgrade();
+    public short getLevel() { return level; }
+
     // Each building type should have its own capcity.
     public short getCapacity() { return studentCapacity; }
-    public BuildingType getType() { return type; }   
+    
+    // Sets the new capacity of the building. Will keep the same students in the building,
+    // removing some if the capacity is set lower than the current amount of student. Only called
+    // by upgrade and downgrade.
+    protected void setCapacity(short newCapacity) {
+        this.studentCapacity = newCapacity;
+        int[] new_students = new int[newCapacity];
+
+        for (int i = 0; i < studentCount; i++) {
+            if (i+1 > newCapacity) break;
+            new_students[i] = students[i];
+        }
+        this.students = new_students;
+    }
 
     // Returns true if the max amount of students are already in the building.
     public boolean isFull() {
@@ -78,14 +115,8 @@ public abstract class Building {
     }
 
     public void draw(SpriteBatch batch) {
-        if (type == BuildingType.Accommodation) {
-            batch.draw(Assets.accommodationTexture, pos.x, pos.y, getWidth(), getHeight());
-        }
-        else if (type == BuildingType.LectureTheatre) {
-            batch.draw(Assets.lectureTheatreTexture, pos.x, pos.y, getWidth(), getHeight());
-        }
-        else if (type == BuildingType.Restaurant) {
-            batch.draw(Assets.restaurantTexture, pos.x, pos.y, getWidth(), getHeight());
+        if (texture != null) {
+            batch.draw(texture, pos.x, pos.y, getWidth(), getHeight());
         }
         else {
             batch.draw(Assets.couldNotLoad, pos.x, pos.y, getWidth(), getHeight());

@@ -131,7 +131,7 @@ public class Student {
         if (status == Status.Free) {
             status = Status.Sleeping;
             timeUntilFree = time;
-            if (Consts.STUDENT_LIFE_DEBUG_MODE_ON) {
+            if (Consts.STUDENT_ACTIVITY_DEBUG_MODE_ON) {
                 Gdx.app.log("Student", "Student " + ID + " is now sleeping for " + time + " seconds.");
             }
         }
@@ -141,7 +141,7 @@ public class Student {
         if (status == Status.Free) {
             status = Status.Eating;
             timeUntilFree = time;
-            if (Consts.STUDENT_LIFE_DEBUG_MODE_ON) {
+            if (Consts.STUDENT_ACTIVITY_DEBUG_MODE_ON) {
                 Gdx.app.log("Student", "Student " + ID + " is now eating for " + time + " seconds.");
             }
         }
@@ -222,7 +222,7 @@ public class Student {
     // Moves the student based on the path. Should only be called by the update method.
     private void move(float deltaTime) {
         if (path.size() == 0) {
-            if (Consts.STUDENT_LIFE_DEBUG_MODE_ON) {
+            if (Consts.STUDENT_ACTIVITY_DEBUG_MODE_ON) {
                 Gdx.app.log("Student", "Student " + ID + " is now free.");
             }
             status = Status.Free;
@@ -280,7 +280,7 @@ public class Student {
         
         this.path = path;
         status = Status.Travelling;
-        if (Consts.STUDENT_LIFE_DEBUG_MODE_ON) {
+        if (Consts.STUDENT_ACTIVITY_DEBUG_MODE_ON) {
             Gdx.app.log("Student", "Student " + ID + " is now travelling to " + point.toString());
         }
         return true;

@@ -1,17 +1,53 @@
 package io.example.test;
 
+import com.badlogic.gdx.Gdx;
+
 public class Accommodation extends Building {
     // The IDS of students this building is home to.
     private int[] homeTo;
     private int homeToCount = 0;
     
     public Accommodation(Vector2i pos) {
-        super(pos, (short)2);
+        super(pos, Consts.ACCOMMODATION_CAPACITY_L1, BuildingType.Accommodation);
         homeTo = new int[2];
         for (int i = 0; i < 2; i++) {
             homeTo[i] = -1;
         }
-        type = BuildingType.Accommodation;
+    }
+
+    @Override
+    public void upgrade() {
+        if (level < 1 || level >= 3) return;
+        
+        short newLevel = (short)(level + 1);
+        if (newLevel == 2) {
+            setCapacity((short)Consts.ACCOMMODATION_CAPACITY_L2);
+        } else if (newLevel == 3) {
+            setCapacity((short)Consts.ACCOMMODATION_CAPACITY_L3);
+        }
+        
+        level = newLevel;
+
+        if (Consts.BUILDING_LEVEL_CHANGE_MODE_ON) {
+            Gdx.app.log("Accommodation", type + " at point " + pos + " has been upgraded to level " + newLevel);
+        }
+    }
+
+    @Override
+    public void downgrade() {
+        if (level <= 1 || level > 3) return;
+
+        short newLevel = (short)(level - 1);
+        if (newLevel == 1) {
+            setCapacity((short)Consts.ACCOMMODATION_CAPACITY_L1);
+        } else if (newLevel == 2) {
+            setCapacity((short)Consts.ACCOMMODATION_CAPACITY_L2);
+        }
+
+        level = newLevel;
+        if (Consts.BUILDING_LEVEL_CHANGE_MODE_ON) {
+            Gdx.app.log("Accommodation", type + " at point " + pos + " has been downgraded to level " + newLevel);
+        }
     }
 
 
