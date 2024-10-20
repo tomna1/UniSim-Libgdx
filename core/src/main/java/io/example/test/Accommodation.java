@@ -9,10 +9,7 @@ public class Accommodation extends Building {
     
     public Accommodation(Vector2i pos) {
         super(pos, Consts.ACCOMMODATION_CAPACITY_L1, BuildingType.Accommodation);
-        homeTo = new int[2];
-        for (int i = 0; i < 2; i++) {
-            homeTo[i] = -1;
-        }
+        homeTo = new int[Consts.ACCOMMODATION_CAPACITY_L1];
     }
 
     @Override
@@ -27,7 +24,6 @@ public class Accommodation extends Building {
         }
         
         level = newLevel;
-
         if (Consts.BUILDING_LEVEL_CHANGE_MODE_ON) {
             Gdx.app.log("Accommodation", type + " at point " + pos + " has been upgraded to level " + newLevel);
         }

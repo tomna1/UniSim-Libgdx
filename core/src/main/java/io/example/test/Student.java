@@ -9,14 +9,14 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import io.example.test.GameManager.Colours;
 /* */
 public class Student {
-    private static final float moveSpeed = 5.0f;
+    private static final float moveSpeed = Consts.MOVE_SPEED;
     // all losses and gains take place over 1 second.
-    private static final float learningMeterGain = 5.0f;
-    private static final float hungerMeterGain = 5.0f;
-    private static final float sleepMeterGain = 5.0f;
-    private static final float learningMeterLoss = -1.0f;
-    private static final float hungerMeterLoss = -1.0f;
-    private static final float sleepMeterLoss = -1.0f;
+    private static final float learningMeterGain = Consts.LEARNING_METER_GAIN;
+    private static final float learningMeterLoss = Consts.LEARNING_METER_LOSS;
+    private static final float hungerMeterGain = Consts.HUNGER_METER_GAIN;
+    private static final float hungerMeterLoss = Consts.HUNGER_METER_LOSS;
+    private static final float sleepMeterGain = Consts.SLEEP_METER_GAIN;  
+    private static final float sleepMeterLoss = Consts.SLEEP_METER_LOSS;
 
 
     private GameMap gameMap;
@@ -39,11 +39,11 @@ public class Student {
     // All meters should be between 0 and 200 inclusively.
 
     // Learning meter is increased when a student is in a lecture or library. 
-    private float learningMeter = 200.0f;
+    private float learningMeter = Consts.MAX_METER_AMOUNT;
     // Increase when the student eats.
-    private float hungerMeter = 200.0f;
+    private float hungerMeter = Consts.MAX_METER_AMOUNT;
     // Increases when the student sleeps at their home.
-    private float sleepMeter = 200.0f;
+    private float sleepMeter = Consts.MAX_METER_AMOUNT;
 
 
     // The points that would move the student to the building.
@@ -100,27 +100,27 @@ public class Student {
     }
 
     public boolean isHungry() {
-        if (hungerMeter <= 100) return true;
+        if (hungerMeter <= Consts.SATISIFIED_METER_AMOUNT) return true;
         return false;
     }
 
     public boolean isSleepy() {
-        if (sleepMeter <= 100) return true;
+        if (sleepMeter <= Consts.SATISIFIED_METER_AMOUNT) return true;
         return false;
     }
 
     public boolean wantsToLearn() {
-        if (learningMeter <= 100) return true;
+        if (learningMeter <= Consts.SATISIFIED_METER_AMOUNT) return true;
         return false;
     }
 
     public float getSatisfaction() {
         float hungerSatisfaction = hungerMeter;
-        if (hungerSatisfaction > 100) hungerSatisfaction = 100;
+        if (hungerSatisfaction > Consts.SATISIFIED_METER_AMOUNT) hungerSatisfaction = 100;
         float sleepSatisfaction = sleepMeter;
-        if (sleepSatisfaction > 100) sleepSatisfaction = 100;
+        if (sleepSatisfaction > Consts.SATISIFIED_METER_AMOUNT) sleepSatisfaction = 100;
         float learningSatisfaction = learningMeter;
-        if (learningSatisfaction > 100) learningSatisfaction = 100;
+        if (learningSatisfaction > Consts.SATISIFIED_METER_AMOUNT) learningSatisfaction = 100;
         
         return (hungerSatisfaction + sleepSatisfaction + learningSatisfaction) / 3;
     }
@@ -151,18 +151,18 @@ public class Student {
 
     // Will make sure that all meters are within the 0-100 range inclusively.
     private void validateMeters() {
-        if (learningMeter < 0) learningMeter = 0;
-        else if (learningMeter > 100) learningMeter = 100;
+        if (learningMeter < Consts.MIN_METER_AMOUNT) learningMeter = Consts.MIN_METER_AMOUNT;
+        else if (learningMeter > Consts.MAX_METER_AMOUNT) learningMeter = Consts.MAX_METER_AMOUNT;
 
-        if (sleepMeter < 0) sleepMeter = 0;
-        else if (sleepMeter > 100) sleepMeter = 100;
+        if (sleepMeter < Consts.MIN_METER_AMOUNT) sleepMeter = Consts.MIN_METER_AMOUNT;
+        else if (sleepMeter > Consts.MAX_METER_AMOUNT) sleepMeter = Consts.MAX_METER_AMOUNT;
 
-        if (hungerMeter < 0) hungerMeter = 0;
-        else if (hungerMeter > 100) hungerMeter = 100;
+        if (hungerMeter < Consts.MIN_METER_AMOUNT) hungerMeter = Consts.MIN_METER_AMOUNT;
+        else if (hungerMeter > Consts.MAX_METER_AMOUNT) hungerMeter = Consts.MAX_METER_AMOUNT;
     }
 
-    // Will apply loss to the meters specified in the function. Will make sure that no meters go lower than 0.
-    // This function should be called every 10 seconds. 
+    // Will apply loss to the meters specified in the function. Does not guarantee
+    // the meters will be between 0 and 100 inclusively.
     public void applyMeterLoss(boolean learningMeter, boolean sleepMeter, boolean hungerMeter) {
         if (learningMeter) {
             this.learningMeter += learningMeterLoss;
@@ -173,7 +173,6 @@ public class Student {
         if (hungerMeter) {
             this.hungerMeter += hungerMeterLoss;
         }
-        validateMeters();
     }
 
 

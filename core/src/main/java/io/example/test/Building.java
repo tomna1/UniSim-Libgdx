@@ -38,16 +38,16 @@ public abstract class Building {
         students = new int[studentCapacity];
         this.type = type;
         if (type == BuildingType.Accommodation) {
-            texture = Assets.accommodationTexture;
+            texture = Assets.accommodationTextureL1;
         } else if (type == BuildingType.LectureTheatre) {
-            texture = Assets.lectureTheatreTexture;
+            texture = Assets.lectureTheatreTextureL1;
         } else if (type == BuildingType.Restaurant) {
 
         }
         level = 1;
     }
 
-    
+
     public BuildingType getType() { return type; }  
 
     public int getHeight() {

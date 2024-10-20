@@ -1,9 +1,8 @@
 package io.example.test;
 
 // This class is to manage all constants that might appear
-// in weird places which can be hard to track. Not all consts
-// appear in this class such as the student meter gains const
-// which are kept entirely in the student class.
+// in weird places which can be hard to track and to put all
+// constants together to balance things easier.
 public class Consts {
     private Consts() { }
     
@@ -12,7 +11,7 @@ public class Consts {
     // ALL GENERAL CONSTANTS
     // =================================
 
-
+    public static final int STARTING_MONEY = 1000;
 
     // =================================
     // ALL DEBUGGING CONSTANTS
@@ -56,6 +55,22 @@ public class Consts {
     // How long the manager should wait before updating the meters of each
     // student in seconds.
     public static final float TIME_BETWEEN_STUDENT_UPDATES = 1.0f;
+    public static final float MOVE_SPEED = 5.0f;
+    // all losses and gains take place over 1 second.
+    public static final float LEARNING_METER_GAIN = 5.0f;
+    public static final float HUNGER_METER_GAIN = 5.0f;
+    public static final float SLEEP_METER_GAIN = 5.0f;
+    public static final float LEARNING_METER_LOSS = -1.0f;
+    public static final float HUNGER_METER_LOSS = -1.0f;
+    public static final float SLEEP_METER_LOSS = -1.0f;
+
+    // The minimum value the meter can go to.
+    public static final float MIN_METER_AMOUNT = 0.0f;
+    // The maximum value a meter can go to.
+    public static final float MAX_METER_AMOUNT = 200.0f;
+    // The value at which a student is fully satisfied. The meter can go higher
+    // than this but a student wont gain additional satisfaction.
+    public static final float SATISIFIED_METER_AMOUNT = 100.0f;
 
     // =================================
     // ALL BUILDING RELATED CONSTANTS

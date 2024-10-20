@@ -57,12 +57,12 @@ public class Grid {
 
     // Checks if a building can fit within the dimension of the grid. Does not
     // check if there is actual space in the grid.
-    public boolean canBuildingFitInGrid(Building b) {
+    private boolean canBuildingFitInGrid(Building b) {
         if (b.pos.x < 0 || b.pos.y < 0) return false;
         
         if (
-        b.pos.x + b.getWidth() > width ||
-        b.pos.y + b.getHeight() > height
+            b.pos.x + b.getWidth() > width ||
+            b.pos.y + b.getHeight() > height
         ) return false;
 
         return true;

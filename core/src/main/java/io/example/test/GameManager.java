@@ -23,16 +23,19 @@ public class GameManager {
     // the colour red can only attend lectures which also have the colour red.
     private static ArrayList<Colours> activatedColours;
 
+    // used to choose which building to build.
     private BuildingType selectedBuilding = BuildingType.Accommodation;
+    // used to build paths
     private boolean isPathSelected = false;
 
     // how much money the player has.
-    private static int _money = 1000;
+    private static int _money = Consts.STARTING_MONEY;
 
     // The map that the game takse place on.
     private GameMap gameMap;
 
-    private StudentManager stuMan;
+    // Used to manage all students.
+    private StudentManager studentManager;
     
 
     // used for managing deltatime between update calls.
@@ -43,14 +46,14 @@ public class GameManager {
         activatedColours = new ArrayList<Colours>();
         activatedColours.add(Colours.RED);
         activatedColours.add(Colours.BLUE);
-        stuMan = new StudentManager();
+        studentManager = new StudentManager();
     }
 
     // This method should be called directly after the game manager is instantiated. 
     // Can only be called once.
     public void generateMap(int width, int height) {
-        if (gameMap == null) gameMap = new GameMap(stuMan, width, height);
-        stuMan.useMap(gameMap);
+        if (gameMap == null) gameMap = new GameMap(studentManager, width, height);
+        studentManager.useMap(gameMap);
     }
 
     public static void activateColour(Colours colour) {
@@ -115,12 +118,12 @@ public class GameManager {
 
     
     public void update(float deltaTime) {
-        stuMan.update(deltaTime);
+        studentManager.update(deltaTime);
     }
 
 
     public void draw(SpriteBatch batch) {
         gameMap.draw(batch);
-        stuMan.drawStudents(batch);
+        studentManager.drawStudents(batch);
     }
 }
