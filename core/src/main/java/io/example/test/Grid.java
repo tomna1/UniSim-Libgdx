@@ -3,34 +3,27 @@ package io.example.test;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import io.example.test.Tile.TileType;
+
 import java.util.Queue;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
 // A grid contains informtion about each specific tile in the game.
-// Will be used to check if a building can be added to the map or not.
+// Will be used to check if a building can be added to the map or not and
+// used for pathfinding.
 public class Grid {
-    private TileType[][] tiles;
+    private Tile[][] tiles;
     
     private int width;
     private int height;
 
 
-    public enum TileType {
-        Empty,
-        River,
-        Road,
-        Path,
-        BuildingBL, // the bottom left corner of the building.
-        BuildingB, // The bottom row of a building.
-        Building
-    }
-
     public Grid(int width, int height) {
-        tiles = new TileType[height][width];
+        tiles = new Tile[height][width];
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                tiles[i][j] = TileType.Empty;
+                tiles[i][j] = new Tile(TileType.Empty);
             }
         }
         this.width = width;
@@ -78,23 +71,23 @@ public class Grid {
         // Checks all tiles that the building work take up are empty.
         for (int i = posY; i < posY + height; i++) {
             for (int j = posX; j < posX + width; j++) {
-                if (tiles[i][j] != TileType.Empty) return false;
+                if (tiles[i][j].getTileType() != TileType.Empty) return false;
             }
         }
         return true;
     }
 
-    // Returns the tiletupe at a particular coorindate. Returns null if outside range.
+    // Returns the tiletype at a particular coorindate. Returns null if outside range.
     public TileType getTile(Vector2i pos) {
         if (posWithinGrid(pos) == false) return null;
-        return tiles[pos.y][pos.x];
+        return tiles[pos.y][pos.x].getTileType();
     }
 
     // Returns true if a particular tile on the grid is walkable. A tile is 
     // walkable if there is a path or building there.
     public boolean isWalkable(Vector2i pos) {
         if (posWithinGrid(pos) == false) return false;
-        TileType tile = tiles[pos.y][pos.x];
+        TileType tile = tiles[pos.y][pos.x].getTileType();
         if (tile == TileType.Path || tile == TileType.Building || tile == TileType.BuildingBL) return true;
         return false;
     }
@@ -103,8 +96,8 @@ public class Grid {
     // Adds a singular path tile to the grid.
     public boolean addPath(Vector2i pos) {
         if (posWithinGrid(pos) == false) return false;
-        if (tiles[pos.y][pos.x] != TileType.Empty) return false;
-        tiles[pos.y][pos.x] = TileType.Path;
+        if (tiles[pos.y][pos.x].getTileType() != TileType.Empty) return false;
+        tiles[pos.y][pos.x].setTileType(TileType.Path);;
         if (Consts.GRID_PLACEMENT_DEBUG_MODE_ON) {
             Gdx.app.log("Grid", "Adding path at " + pos.toString());
         }
@@ -120,8 +113,8 @@ public class Grid {
     // Removes a singular path tile from the grid.
     public boolean removePath(Vector2i pos) {
         if (posWithinGrid(pos) == false) return false;
-        if (tiles[pos.y][pos.x] != TileType.Path) return false;
-        tiles[pos.y][pos.x] = TileType.Empty;
+        if (tiles[pos.y][pos.x].getTileType() != TileType.Path) return false;
+        tiles[pos.y][pos.x].setTileType(TileType.Empty);
         if (Consts.GRID_PLACEMENT_DEBUG_MODE_ON) {
             Gdx.app.log("Grid", "Removing path at " + pos.toString());
         }
@@ -140,16 +133,16 @@ public class Grid {
         // Adds the building
         int i = posY;
         for (int j = posX+1; j < posX + width; j++) {
-            tiles[i][j] = TileType.BuildingB;
+            tiles[i][j].setTileType(TileType.BuildingB);
         }
         
         for (i = posY+1; i < posY + height; i++) {
             for (int j = posX; j < posX + width; j++) {
-                tiles[i][j] = TileType.Building;
+                tiles[i][j].setTileType(TileType.Building);
             }
         }
         
-        tiles[posY][posX] = TileType.BuildingBL;
+        tiles[posY][posX].setTileType(TileType.BuildingBL);
         return true;
     }
 
@@ -161,7 +154,7 @@ public class Grid {
         int posX = b.pos.x;
         int posY = b.pos.y;
 
-        if (tiles[posY][posX] != TileType.BuildingBL) return false;
+        if (tiles[posY][posX].getTileType() != TileType.BuildingBL) return false;
 
         int width = b.getWidth();
         int height = b.getHeight();
@@ -169,7 +162,7 @@ public class Grid {
         // Removes all building tiles
         for (int i = posY; i < posY + height; i++) {
             for (int j = posX; j < posX + width; j++) {
-                tiles[i][j] = TileType.Empty;
+                tiles[i][j].setTileType(TileType.Empty);
             }
         }
 
@@ -277,7 +270,7 @@ public class Grid {
         // Draw all tiles. If they are a building tile, will draw grass instead.
         for (int i = 0; i < height; i++) {
             for (int j = 0; j < width; j++) {
-                if (tiles[i][j] == TileType.Path) {
+                if (tiles[i][j].getTileType() == TileType.Path) {
                     batch.draw(Assets.pathTile, j, i, 1, 1);
                 } else {
                     batch.draw(Assets.grassTile, j, i, 1, 1);

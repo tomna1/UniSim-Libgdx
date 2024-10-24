@@ -8,7 +8,7 @@ import java.util.Random;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import io.example.test.Grid.TileType;
+import io.example.test.Tile.TileType;
 import io.example.test.Building.BuildingType;
 
 // The gamemap stores all the buildings as well as uses an internal grid for pathfinding.
