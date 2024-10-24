@@ -4,7 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
+import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -18,11 +18,15 @@ import com.badlogic.gdx.math.Vector2;
 public class Main extends Game {
     private SpriteBatch batch;
     ExtendViewport viewport;
+    CameraManager camManager;
 
     Sound dropSound;
     Music music;
 
-    Vector2 touchPos;
+    // world coords of mouse pos this frame
+    Vector2 worldMousePos;
+    // screen pos of mouse this frame.
+    Vector2 screenMousePos;
 
     GameManager gameManager;
 
@@ -33,9 +37,11 @@ public class Main extends Game {
         batch = new SpriteBatch();
         // TODO: Fix the viewport
         viewport = new ExtendViewport(Consts.GRID_WIDTH, Consts.GRID_HEIGHT);
+        camManager = new CameraManager(viewport.getCamera());
 
         // used for input.
-        touchPos = new Vector2();
+        worldMousePos = new Vector2();
+        screenMousePos = new Vector2();
 
         // manager
         gameManager = new GameManager();
@@ -51,15 +57,6 @@ public class Main extends Game {
         } else {
             Gdx.app.setLogLevel(Application.LOG_NONE);
         }
-         
-    }
-
-    @Override
-    // The main loop of the game.
-    public void render() {
-        input();
-        logic();
-        draw();
     }
 
     @Override
@@ -72,12 +69,27 @@ public class Main extends Game {
         viewport.update(width, height, true);
     }
 
+    @Override
+    public void pause() {
+    }
 
+
+    @Override
+    // The main loop of the game.
+    public void render() {
+        input();
+        logic();
+        draw();
+    }
 
     private void input() {
-        touchPos.set(Gdx.input.getX(), Gdx.input.getY());
-        viewport.unproject(touchPos);
-        gameManager.processInput(touchPos);
+        screenMousePos.set(Gdx.input.getX(), Gdx.input.getY());
+        worldMousePos.set(screenMousePos);
+        // converts screen coords to world coords.
+        viewport.unproject(worldMousePos);
+
+        camManager.processCameraInput();
+        gameManager.processInput(worldMousePos);
     }
 
     private void logic() {
@@ -88,7 +100,6 @@ public class Main extends Game {
     private void draw() {
         // Clears the screen to red.
         ScreenUtils.clear(Color.RED);
-        // Only one viewport so unnecessary but ill keep it here.
         viewport.apply();
         // updates the camera view.
         batch.setProjectionMatrix(viewport.getCamera().combined);

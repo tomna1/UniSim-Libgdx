@@ -14,6 +14,19 @@ public class Consts {
     public static final int STARTING_MONEY = 1000;
 
     // =================================
+    // ALL CAMERA CONSTANTS
+    // =================================
+
+    public static final float CAMERA_SPEED = 15.0f;
+    
+    // The MIN a cam can zoom in. MUST BE A MULTIPLE OF CAM_ZOOM_PER_LEVEL
+    public static final float CAM_MIN_ZOOM = 0.5f;
+    // The MAX a cam can zoom in. MUST BE A MULTIPLE OF CAM_ZOOM_PER_LEVEL
+    public static final float CAM_MAX_ZOOM = 2.5f;
+    // How much the camera should be zoomed in or out each time Q or E is pressed.
+    public static final float CAM_ZOOM_PER_LEVEL = 0.5f;
+
+    // =================================
     // ALL DEBUGGING CONSTANTS
     // =================================
 
