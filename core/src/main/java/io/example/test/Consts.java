@@ -17,8 +17,8 @@ public class Consts {
     // ALL CAMERA CONSTANTS
     // =================================
 
+    // How fast the camera moves.
     public static final float CAMERA_SPEED = 15.0f;
-    
     // The MIN a cam can zoom in. MUST BE A MULTIPLE OF CAM_ZOOM_PER_LEVEL
     public static final float CAM_MIN_ZOOM = 0.5f;
     // The MAX a cam can zoom in. MUST BE A MULTIPLE OF CAM_ZOOM_PER_LEVEL
@@ -89,42 +89,27 @@ public class Consts {
     // ALL BUILDING RELATED CONSTANTS
     // =================================
 
-    // The height of the accommodation texture.
-    public static final int ACCOMMODATION_HEIGHT = 2;
     // The width of the accommodatoin texture.
     public static final int ACCOMMODATION_WIDTH = 2;
-
-    // CAPACITY is the amount of students it can hold
-    public static final short ACCOMMODATION_CAPACITY_L1 = 2;
-    public static final short ACCOMMODATION_CAPACITY_L2 = 4;
-    public static final short ACCOMMODATION_CAPACITY_L3 = 6;
+    // The height of the accommodation texture.
+    public static final int ACCOMMODATION_HEIGHT = 2;
+    // the amount of students a building can have in it.
+    public static final int ACCOMMODATION_CAPACITY_L1 = 2;
     // MAINTENANCE is the cost of maintaining.
     public static final int ACCOMMODATION_MAINTENANCE_L1 = 50;
-    public static final int ACCOMMODATION_MAINTENANCE_L2 = 75;
-    public static final int ACCOMMODATION_MAINTENANCE_L3 = 100;
-    // The initial cost of building or cost of upgrading to next level.
+    // The initial cost of building.
     public static final int ACCOMMODATION_COST_L1 = 300;
-    public static final int ACCOMMODATION_COST_L2 = 100;
-    public static final int ACCOMMODATION_COST_L3 = 200;
 
-    
-    public static final int LECTURE_THEATRE_HEIGHT = 2;
-    public static final int LECTURE_THEATRE_WIDTH = 2;
-
-    public static final short LECTURE_THEATRE_CAPACITY_L1 = 20;
-    public static final short LECTURE_THEATRE_CAPACITY_L2 = 25;
-    public static final short LECTURE_THEATRE_CAPACITY_L3 = 30;
-    
+    public static final int LECTURE_THEATRE_WIDTH = 3;
+    public static final int LECTURE_THEATRE_HEIGHT = 3;
+    public static final int LECTURE_THEATRE_CAPACITY_L1 = 20;
     public static final int LECTURE_THEATRE_MAINTENANCE_L1 = 300;
-    public static final int LECTURE_THEATRE_MAINTENANCE_L2 = 400;
-    public static final int LECTURE_THEATRE_MAINTENANCE_L3 = 500;
-    
     public static final int LECTURE_THEATRE_COST_L1 = 1000;
-    public static final int LECTURE_THEATRE_COST_L2 = 300;
-    public static final int LECTURE_THEATRE_COST_L3 = 500;
 
 
-    
-
-    
+    public static final int RESTAURANT_WIDTH = 3;
+    public static final int RESTAURANT_HEIGHT = 3;
+    public static final int RESTAURANT_CAPACITY_L1 = 20;
+    public static final int RESTAURANT_MAINTENANCE_L1 = 300;
+    public static final int RESTAURANT_COST_L1 = 1000;
 }

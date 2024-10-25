@@ -23,12 +23,19 @@ public class GameMap {
 
     // Used to create new students when accommodation is built or destroyed.
     private StudentManager studentManager;
+
+    // used to create new buildings
+    private BuildingFactory buildingFactory = new BuildingFactory();
+
+    // used to add students to a building with a housing component.
+    private HousingSystem housingSystem;
     
 
     public GameMap(StudentManager studentManager, int width, int height) {
         grid = new Grid(width, height);
         buildings = new HashMap<>();
         this.studentManager = studentManager;
+        housingSystem = new HousingSystem(studentManager);
     }
 
     public TileType getTile(int posX, int posY) { return grid.getTile(new Vector2i(posX, posY)); }
@@ -71,17 +78,17 @@ public class GameMap {
         Vector2i pos = new Vector2i(posX, posY);
         
         if (type == BuildingType.Accommodation) {
-            Accommodation building = new Accommodation(pos);
+            Building building = buildingFactory.createBuilding(BuildingType.Accommodation, pos);
             if (grid.addBuilding(building) == false) return false;
-            building.makeStudentsHome(studentManager);
             buildings.put(pos, building);
+            housingSystem.onBuildingBuilt(building.housingComponent, pos);
             if (Consts.BUILDING_PLACEMENT_DEBUG_MODE_ON) {
                 Gdx.app.log("GameMap", "Adding " + building.getType() + " at " + pos.toString());
             }
             return true;
         }
         else if (type == BuildingType.LectureTheatre) {
-            LectureTheatre building = new LectureTheatre(pos);
+            Building building = buildingFactory.createBuilding(BuildingType.LectureTheatre, pos);
             if (grid.addBuilding(building) == false) return false;
             buildings.put(pos, building);
             if (Consts.BUILDING_PLACEMENT_DEBUG_MODE_ON) {
@@ -107,7 +114,6 @@ public class GameMap {
                 tile = grid.getTile(pos);
             }
         }
-        
         if (tile == TileType.BuildingB) {
             while (tile == TileType.BuildingB) {
                 pos.x--;
@@ -118,8 +124,7 @@ public class GameMap {
             if (buildings.containsKey(pos)) {
                 Building building = buildings.get(pos);
                 if (building.getType() == BuildingType.Accommodation) {
-                    Accommodation acc = (Accommodation)building;
-                    acc.killEmAll(studentManager);
+                    housingSystem.onBuildingDestroyed(building.housingComponent);
                 }
                 grid.removeBuilding(buildings.get(pos));
                 buildings.remove(pos);
