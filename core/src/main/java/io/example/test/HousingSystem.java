@@ -10,8 +10,8 @@ public class HousingSystem {
     }
 
 
-    public void onBuildingBuilt(HousingComponent housingComponent, Vector2i homePos) {
-        fillHome(housingComponent, homePos);
+    public void onBuildingBuilt(HousingComponent housingComponent, Building home) {
+        fillHome(housingComponent, home);
     }
 
     public void onBuildingDestroyed(HousingComponent housingComponent) {
@@ -20,10 +20,10 @@ public class HousingSystem {
 
     // Fills the housing component with students and adds students to the map based on homePos. This
     // should be called each time a new building is built.
-    private void fillHome(HousingComponent housingComponent, Vector2i homePos) {
+    private void fillHome(HousingComponent housingComponent, Building home) {
         int studentID;
         while (housingComponent.isFull() == false) {
-            studentID = studentManager.addStudent(homePos);
+            studentID = studentManager.addStudent(home);
             housingComponent.addStudentToHome(studentID);
         }
     }

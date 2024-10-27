@@ -1,6 +1,6 @@
 package io.example.test;
 // A component that can be added to the building class. It stores the studentIDs
-// of students who have entered this building.
+// of students who have entered this building. It is manipulated by the EnteringSystem.
 public class EnterableComponent {
     // how many students can fit in building
     private int studentCapacity;
@@ -21,9 +21,7 @@ public class EnterableComponent {
 
     public boolean contains(int studentID) {
         for (int i = 0; i < studentCapacity; i++) {
-            if (students[i] == studentID) {
-                return true;
-            }
+            if (students[i] == studentID) return true;
         }
         return false;
     }
@@ -39,11 +37,18 @@ public class EnterableComponent {
     public boolean exitStudent(int studentID) {
         for (int i = 0; i < studentCapacity; i++) {
             if (students[i] == studentID) {
-                students[i] = students[studentCount];
+                students[i] = students[studentCount-1];
                 studentCount--;
                 return true;
             }
         }
         return false;
+    }
+
+    // Returns a copy of the students that the component is storing.
+    public int[] data() {
+        int[] data = new int[studentCapacity];
+        data = students.clone();
+        return data;
     }
 }

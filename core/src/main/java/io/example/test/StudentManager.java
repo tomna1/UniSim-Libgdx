@@ -2,8 +2,12 @@ package io.example.test;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import io.example.test.GameManager.Colours;
+
 import com.badlogic.gdx.Gdx;
 
 // This is the class where all the students are stored and updated. This
@@ -26,7 +30,7 @@ public class StudentManager {
     public int count() { return students.size(); }
 
     // Returns the studentID if it has been successfully added and returns -1 if not.
-    public int addStudent(Vector2i homePos) {
+    public int addStudent(Building home) {
         int id = IDGiver.next();
         if (id == 0) {
             return -1;
@@ -34,7 +38,7 @@ public class StudentManager {
         if (Consts.STUDENT_LIFE_DEBUG_MODE_ON) {
             Gdx.app.log("StudentManager", "Adding new Student " + id);
         }
-        Student student = new Student(gameMap, id, "", GameManager.getRandomColour(), homePos);
+        Student student = new Student(gameMap, id, "", GameManager.getRandomColour(), home);
         GameManager.addMoney(Consts.MONEY_PER_STUDENT_JOINING);
         students.put(id, student);
         return id;
@@ -72,6 +76,18 @@ public class StudentManager {
         }
         for (Student stu : students.values()) {
             stu.update(deltaTime, updateMeters);
+        }
+    }
+
+    // Building should have an event component which is used to ping all valid
+    // students.
+    public void processEvent(StudentActivity studentActivity) {
+        int max = studentActivity.getEventCapacity();
+        int count = 0;
+
+        for (Student stu : students.values()) {
+            if (stu.processEvent(studentActivity)) count++;
+            if (count > max) return;
         }
     }
 

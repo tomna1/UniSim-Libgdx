@@ -36,7 +36,7 @@ public class Consts {
     public static final boolean DEBUG_MODE_ON = true;
     
     // The results of pathfinding algorithms between points will be logged.
-    public static final boolean PATHFINDING_DEBUG_MODE_ON = false;
+    public static final boolean PATHFINDING_DEBUG_MODE_ON = true;
     // Buildings being added and removed will be logged.
     public static final boolean BUILDING_PLACEMENT_DEBUG_MODE_ON = false;
     // When a building changes level (gets upgraded or downgraded).
@@ -46,7 +46,9 @@ public class Consts {
     // Students being created and destroyed will be logged.
     public static final boolean STUDENT_LIFE_DEBUG_MODE_ON = false;
     // The tasks the students do will be logged.
-    public static final boolean STUDENT_ACTIVITY_DEBUG_MODE_ON = false;
+    public static final boolean STUDENT_ACTIVITY_DEBUG_MODE_ON = true;
+    // When an event starts, it will be logged.
+    public static final boolean EVENT_START_DEBUG_MODE_ON = true;
 
     // =================================
     // ALL MAP RELATED CONSTANTS
@@ -70,12 +72,12 @@ public class Consts {
     public static final float TIME_BETWEEN_STUDENT_UPDATES = 1.0f;
     public static final float MOVE_SPEED = 5.0f;
     // all losses and gains take place over 1 second.
-    public static final float LEARNING_METER_GAIN = 5.0f;
-    public static final float HUNGER_METER_GAIN = 5.0f;
-    public static final float SLEEP_METER_GAIN = 5.0f;
-    public static final float LEARNING_METER_LOSS = -1.0f;
-    public static final float HUNGER_METER_LOSS = -1.0f;
-    public static final float SLEEP_METER_LOSS = -1.0f;
+    public static final float LEARNING_METER_GAIN = 12.0f;
+    public static final float HUNGER_METER_GAIN = 12.0f;
+    public static final float SLEEP_METER_GAIN = 12.0f;
+    public static final float LEARNING_METER_LOSS = -4.0f;
+    public static final float HUNGER_METER_LOSS = -4.0f;
+    public static final float SLEEP_METER_LOSS = -4.0f;
 
     // The minimum value the meter can go to.
     public static final float MIN_METER_AMOUNT = 0.0f;
@@ -99,12 +101,20 @@ public class Consts {
     public static final int ACCOMMODATION_MAINTENANCE_L1 = 50;
     // The initial cost of building.
     public static final int ACCOMMODATION_COST_L1 = 300;
+    // How long the building allow a student to sleep for in seconds.
+    public static final float ACCOMMODATION_SLEEPING_TIME_L1 = 7.0f;
 
     public static final int LECTURE_THEATRE_WIDTH = 3;
     public static final int LECTURE_THEATRE_HEIGHT = 3;
     public static final int LECTURE_THEATRE_CAPACITY_L1 = 20;
     public static final int LECTURE_THEATRE_MAINTENANCE_L1 = 300;
     public static final int LECTURE_THEATRE_COST_L1 = 1000;
+    // How long it takes a lecture to start once it has been announced.
+    public static final float LECTURE_TIME_TO_START_L1 = 5.0f;
+    // How long the lecture last once it has started
+    public static final float LECTURE_DURATION_L1 = 10.0f;
+    // How long it takes for the event to be restarted once it has ended.
+    public static final float LECTURE_TIME_BETWEEN_EVENTS_L1 = 20.0f;
 
 
     public static final int RESTAURANT_WIDTH = 3;
@@ -112,4 +122,6 @@ public class Consts {
     public static final int RESTAURANT_CAPACITY_L1 = 20;
     public static final int RESTAURANT_MAINTENANCE_L1 = 300;
     public static final int RESTAURANT_COST_L1 = 1000;
+    // How long students should eat for
+    public static final float RESTAURANT_EATING_TIME_L1 = 7.0f;
 }

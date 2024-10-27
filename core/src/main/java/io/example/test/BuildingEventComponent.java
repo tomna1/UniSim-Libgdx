@@ -3,38 +3,51 @@ package io.example.test;
 import java.util.ArrayList;
 import io.example.test.GameManager.Colours;
 
-// A component which can be added to a building which specifies an event
-// (such as a lecture for a lecture theatre) which will attract students
-// to enter the building. This component is altered by the [ENTER SYSTEM NAME HERE].
+// A building Event is a building activity but with a time limit and when the event is first
+// activated by the building, it will ping all valid students to come to the building. This
+// will give all valid students a StudentActivityComponent which they can use to enter the event.
+// Events override the current activity a student is doing. 
 public class BuildingEventComponent {
+    
     // The colours of various students this event is for. If empty,
     // the event is for all students
-    public ArrayList<Colours> validStudents;
+    public ArrayList<Colours> validStudents = new ArrayList<>();
 
-    // The amount of time it takes for an event to start
+    // This value should be incremented every time a new event is started.
+    // The StudentActivity class uses it to check if an event has ended.
+    private int eventCount = 0;
+
+    // Each event has a timeToStart, an event duration and a timeBetweenEvents.
+    // timeToStart is the amount of time before an events starts
+    // eventDuration is the amount of time an event lasts
+    // timeBetweenEvents is the amount of time after an event has finished for the
+    // event to be restarted
+
     private float timeToStart;
-    // The amount of time until an event starts
     public float timeUntilStarts;
 
-    // The amount of time it takes for an event to be completed once it has started
     private float eventDuration;
-    // The amount of time left before the event ends
     public float timeLeft;
 
-    public BuildingEventComponent(ArrayList<Colours> validStudents, float timeToStart, float eventDuration) {
-        this.validStudents = validStudents;
+    private float timeBetweenEvents;
+    public float timeBeforeRestart;
+
+    public BuildingEventComponent(float timeToStart, float eventDuration, float timeBetweenEvents) {
         this.timeToStart = timeToStart;
         this.eventDuration = eventDuration;
+        timeUntilStarts = timeToStart;
+        timeLeft = eventDuration;
+        this.timeBetweenEvents = timeBetweenEvents;
+        timeBeforeRestart = timeBetweenEvents;
     }
 
-    // Resets the timeUntilStarts variable to the amount of time it takes the event 
-    // to start.
-    public void resetTimeToStart() {
+    public int getEventCount() { return eventCount; }
+
+    public void restartEvent() {
         timeUntilStarts = timeToStart;
-    }
-    // Resets the timeLeft variable to the amount of time it takes an event to take.
-    public void resetTimeLeft() {
         timeLeft = eventDuration;
+        timeBeforeRestart = timeBetweenEvents;
+        eventCount++;
     }
 
     public void addValidColour(Colours colour) {

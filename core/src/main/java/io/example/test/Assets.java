@@ -9,16 +9,8 @@ public class Assets {
     
     // Building textures used by gamemap.
     public static Texture accommodationTextureL1;
-    public static Texture accommodationTextureL2;
-    public static Texture accommodationTextureL3;
-    
     public static Texture lectureTheatreTextureL1;
-    public static Texture lectureTheatreTextureL2;
-    public static Texture lectureTheatreTextureL3;
-    
     public static Texture restaurantTextureL1;
-    public static Texture restaurantTextureL2;
-    public static Texture restaurantTextureL3;
 
     // Tile textures used by grid.
     public static Texture grassTile;

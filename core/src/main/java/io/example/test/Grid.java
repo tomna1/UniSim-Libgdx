@@ -88,7 +88,7 @@ public class Grid {
     public boolean isWalkable(Vector2i pos) {
         if (posWithinGrid(pos) == false) return false;
         TileType tile = tiles[pos.y][pos.x].getTileType();
-        if (tile == TileType.Path || tile == TileType.Building || tile == TileType.BuildingBL) return true;
+        if (tile == TileType.Path || tile == TileType.Building || tile == TileType.BuildingBL || tile == TileType.BuildingB) return true;
         return false;
     }
 
@@ -171,15 +171,30 @@ public class Grid {
 
 
     // Finds a valid path between a start point and an end point. Will return null if
-    // the path is not possible.
+    // the path is not possible. If start and end are the same, will return array of size 1
+    // contains that node.
     public ArrayList<Vector2i> findPath(Vector2i start, Vector2i end) {
         // TODO: OPTIMISE, A*.
+        ArrayList<Vector2i> path = new ArrayList<>();
         
-        // Uses BFS algorithm. Optimisations can be made.
         if (isWalkable(start) == false) return null;
         if (isWalkable(end) == false) return null;
-        if (start.equals(end)) return null;
 
+        if (start.equals(end)) {
+            path.add(new Vector2i(start));
+            return path;
+        }
+        
+        ArrayList<Vector2i> validEndNodes = new ArrayList<>();
+        if (isWalkable(end) == false) validEndNodes.add(new Vector2i(end));
+        if (getTile(end) == TileType.BuildingBL) {
+            validEndNodes.add(new Vector2i(end.x+1 ,end.y));
+            validEndNodes.add(new Vector2i(end.x-1 ,end.y));
+            validEndNodes.add(new Vector2i(end.x ,end.y+1));
+            validEndNodes.add(new Vector2i(end.x ,end.y-1));
+        }
+        
+        // Uses BFS algorithm. Optimisations can be made.
         // All path tiles in this algorithm are considered nodes.
        
         boolean[][] isVisited = new boolean[height][width];
@@ -200,16 +215,16 @@ public class Grid {
         while (nodeQueue.size() > 0) {
            Vector2i node = nodeQueue.poll();
            Vector2i neighbour = new Vector2i(node);
-            if (node.equals(end)) {
+            if (validEndNodes.contains(node)) {
                 // construct the completed path.
-                ArrayList<Vector2i> path = new ArrayList<>();
                 while (node.equals(start) == false) {
                     path.add(0, node);
                     node = prevNode[node.y][node.x];
                 }
                 path.add(0, node);
+                if (path.contains(end) == false) path.add(end);
                 if (Consts.PATHFINDING_DEBUG_MODE_ON) {
-                    Gdx.app.log("Grid", "Found path between " + start.toString() + " and " + end.toString());
+                    Gdx.app.log("Grid", "Found path between " + start.toString() + " and " + end);
                 }
                 return path;
             } 

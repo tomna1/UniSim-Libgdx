@@ -119,6 +119,7 @@ public class GameManager {
     
     public void update(float deltaTime) {
         studentManager.update(deltaTime);
+        gameMap.update(deltaTime);
     }
 
 
