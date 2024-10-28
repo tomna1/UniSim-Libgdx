@@ -1,6 +1,12 @@
 package io.example.test;
-// A component that can be added to the building class. It stores the studentIDs
-// of students who have entered this building. It is manipulated by the EnteringSystem.
+
+
+/**
+ * A component that can be added to the building class. It stores the studentIDs
+ * of students who have entered this building. It is manipulated by the
+ * {@link io.example.test.EnteringSystem}.
+ * @author Thomas Nash
+ */
 public class EnterableComponent {
     // how many students can fit in building
     private int studentCapacity;
@@ -14,11 +20,20 @@ public class EnterableComponent {
         this.students = new int[studentCapacity];
     }
 
-    // Each building type should have its own capcity.
+    /**
+     * @return The amount of people this building can fit in it.
+     */
     public int getCapacity() { return studentCapacity; }
-    // Returns true if the max amount of students are already in the building.
+    /**
+     * @return true if the max amount of people are already inside.
+     */
     public boolean isFull() { return studentCount >= studentCapacity; }
 
+    /**
+     * Checks whether the component contains a studentID. 
+     * @param studentID ID of a student
+     * @return true if component contains ID and false otherwise.
+     */
     public boolean contains(int studentID) {
         for (int i = 0; i < studentCapacity; i++) {
             if (students[i] == studentID) return true;
@@ -26,14 +41,25 @@ public class EnterableComponent {
         return false;
     }
 
-    // A students enters the building.
-    public void enterStudent(int studentID) {
-        if (isFull()) return;
+    /**
+     * Attempts to add a student to the component. Think of it like a student entering
+     * a building.
+     * @param studentID ID of a student.
+     * @return true if successfully added and false otherwise.
+     */
+    public boolean enterStudent(int studentID) {
+        if (isFull()) return false;
         students[studentCount] = studentID;
         studentCount++;
+        return true;
     }
 
-    // A student exits the building.
+    /**
+     * Attempts to remove a student from the component Think of it like a student leaving
+     * a building.
+     * @param studentID ID of a student.
+     * @return true if successfully removed and false otherwise.
+     */
     public boolean exitStudent(int studentID) {
         for (int i = 0; i < studentCapacity; i++) {
             if (students[i] == studentID) {
@@ -45,7 +71,11 @@ public class EnterableComponent {
         return false;
     }
 
-    // Returns a copy of the students that the component is storing.
+    /**
+     * Returns a copy of the data this component is storing which are the IDs
+     * of students which are currently inside this component.
+     * @return Array of ints which represent the IDs of student.
+     */
     public int[] data() {
         int[] data = new int[studentCapacity];
         data = students.clone();

@@ -2,34 +2,46 @@ package io.example.test;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.ArrayList;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-
-import io.example.test.GameManager.Colours;
-
 import com.badlogic.gdx.Gdx;
 
-// This is the class where all the students are stored and updated. This
-// is where all the logic for the students go. 
+/**
+ * This is the class where all students are stored and updated.
+ * @author Thomas Nash
+ */
 public class StudentManager {
     private Map<Integer, Student> students;
     private UniqueIDGiver IDGiver = new UniqueIDGiver();
 
     // used for managing deltatime between update calls.
-    float totalDeltaTime = 0.0f;
+    private float totalDeltaTime = 0.0f;
 
-    GameMap gameMap;
+    private GameMap gameMap;
 
+    /**
+     * Creates a new manager with no students.
+     */
     public StudentManager() {
         students = new HashMap<>();
     }
-    // This method should be called before any other methods can be called.
+    /**
+     * Allows the student manager the assign the correct map to each student which
+     * allows them to do pathfinding. SHOULD BE CALLED BEFORE ANY OTHER METHOD.
+     * @param gameMap The map the students are on.
+     */
     public void useMap(GameMap gameMap) { this.gameMap = gameMap;}
 
+    /**
+     * @return The amount of students stored by the manager.
+     */
     public int count() { return students.size(); }
 
-    // Returns the studentID if it has been successfully added and returns -1 if not.
+    /**
+     * Attempts to add a student to the student manager.
+     * @param home The home of the student.
+     * @return The ID of the student or -1 if not successful.
+     */
     public int addStudent(Building home) {
         int id = IDGiver.next();
         if (id == 0) {
@@ -44,19 +56,27 @@ public class StudentManager {
         return id;
     }
 
-    // Removes a student from the manager based on their id.
-    public void removeStudent(int studentID) {
+    /**
+     * Attempts to remove a student from the manager based on their ID.
+     * @param studentID The ID of a student.
+     * @return true if successfully removed and false if not.
+     */
+    public boolean removeStudent(int studentID) {
         if (students.containsKey(studentID) == false) {
-            return;
+            return false;
         }
         IDGiver.returnID(studentID);
         if (Consts.STUDENT_LIFE_DEBUG_MODE_ON) {
             Gdx.app.log("StudentManager", "removing  Student " + studentID);
         }
         students.remove(studentID);
+        return true;
     }
 
-    // Returns the average satisfaction of a student.
+    /**
+     * Gets the average satisfaction of every student stored by the manager.
+     * @return Between 0-100 inclusively. Represents percentage.
+     */
     public float getOverallSatisfaction() {
         float satisfaction = 0.0f;
         float satisfactionMult = 100.0f / students.size();
@@ -66,7 +86,12 @@ public class StudentManager {
         return satisfaction;
     }
 
-    // updates all students.
+    /**
+     * Updates all students. This work by calling the {@link Student#update(float, boolean)}
+     * method. Will only update the student meter as specified in 
+     * {@link Consts#TIME_BETWEEN_STUDENT_UPDATES}.
+     * @param deltaTime The time since the last frame.
+     */
     public void update(float deltaTime) {
         totalDeltaTime += deltaTime;
         boolean updateMeters = false;
@@ -79,10 +104,14 @@ public class StudentManager {
         }
     }
 
-    // Building should have an event component which is used to ping all valid
-    // students.
+    /**
+     * Will call the {@link Student#processEvent(StudentActivity)} method on all students.
+     * Will never allow more students than the capacity of the event to successfully process
+     * the event.
+     * @param studentActivity The event to process.
+     */
     public void processEvent(StudentActivity studentActivity) {
-        int max = studentActivity.getEventCapacity();
+        int max = studentActivity.getActivityCapacity();
         int count = 0;
 
         for (Student stu : students.values()) {
@@ -91,7 +120,10 @@ public class StudentManager {
         }
     }
 
-    // Draws all the travelling students onto the screen.
+    /**
+     * Draws all students onto the screen.
+     * @param batch
+     */
     public void drawStudents(SpriteBatch batch) {
         for (Student stu : students.values()) {
             stu.draw(batch);

@@ -1,41 +1,51 @@
 package io.example.test;
 
-// This system is used to affect the housing component of a building.
+/**
+ * This system is used to affect the {@link HousingComponent} of a building.
+ * Will create new students and add them to the house and {@link StudentManager} and
+ * will remove students from the house and {@link StudentManager}. 
+ * @author Thomas Nash
+ */
 public class HousingSystem {
     // The student manager that will be used to add and remove students from.
     private StudentManager studentManager;
+
+    // Added so the garbage collector has to do less work.
+    private HousingComponent housingComponent;
     
     public HousingSystem(StudentManager studentManager) {
         this.studentManager = studentManager;
     }
 
 
-    public void onBuildingBuilt(HousingComponent housingComponent, Building home) {
-        fillHome(housingComponent, home);
-    }
-
-    public void onBuildingDestroyed(HousingComponent housingComponent) {
-        killEmAll(housingComponent);
-    }
-
-    // Fills the housing component with students and adds students to the map based on homePos. This
-    // should be called each time a new building is built.
-    private void fillHome(HousingComponent housingComponent, Building home) {
+    /**
+     * This method should be called each time a new Building with a housing component is built.
+     * It will add create new students and add set their home to the specified house 
+     * @param building The building with the housing component.
+     */
+    public void fillHome(Building building) {
+        if (building.housingComponent == null) return;
         int studentID;
+        housingComponent = building.housingComponent;
         while (housingComponent.isFull() == false) {
-            studentID = studentManager.addStudent(home);
+            studentID = studentManager.addStudent(building);
             housingComponent.addStudentToHome(studentID);
         }
     }
 
-    // Removes all student from the HousingComponent and removes them from the student manager.
-    // This should be called before a new building is destroyed.
-    private void killEmAll(HousingComponent housingComponent) {
+    /**
+     * This method should be called each time a Building with a housing component is destroyed.
+     * It will automatically remove each student whose home is this building from the face
+     * of the earth.
+     * @param building The building with the housing component
+     */
+    public void killEmAll(Building building) {
+        if (building.housingComponent == null) return;
         int studentID;
+        housingComponent = building.housingComponent;
         while (housingComponent.count() > 0) {
             studentID = housingComponent.pop();
             studentManager.removeStudent(studentID);
         }
     }
-
 }

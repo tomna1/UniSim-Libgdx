@@ -9,9 +9,11 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.example.test.Tile.TileType;
 import io.example.test.Building.BuildingType;
-import io.example.test.Student.Status;
 
-// The gamemap stores all the buildings as well as uses an internal grid for pathfinding.
+/**
+ * Stores all the buildings and the grid of the gameMap.
+ * @author Thomas Nash
+ */
 public class GameMap {
     private Map<Vector2i, Building> buildings;
 
@@ -42,16 +44,35 @@ public class GameMap {
     public ArrayList<Vector2i> findPath(Vector2i start, Vector2i end) { return grid.findPath(start, end); }
     public ArrayList<Vector2i> findPath(Vector2i start, Building end) { return grid.findPath(start, end.pos); }
     
+    /**
+     * Attempts to adds a single path at the point.
+     * @param posX The x coord of the point.
+     * @param posY The y coord of the point.S
+     * @return true if successfully added and false if not.
+     */
     public boolean addPath(int posX, int posY) {
         Vector2i pos = new Vector2i(posX, posY);
         return grid.addPath(pos);
     }
+    /**
+     * Attempts to remove a single path at the point.
+     * @param posX The x coord of the point.
+     * @param posY The y coord of the point.
+     * @return true is successfully removed and false otherwise.
+     */
     public boolean removePath(int posX, int posY) {
         Vector2i pos = new Vector2i(posX, posY);
         return grid.removePath(pos);
     }
 
 
+    /**
+     * Checks to find if there is a specific building occupying a point in the map
+     * and returns it if it is.
+     * @param posX The x coord of the point.
+     * @param posY The y coord of the point.
+     * @return The building at the point or null if no building is found.
+     */
     public Building getBuildingAtPoint(int posX, int posY) {
         Vector2i pos = new Vector2i(posX, posY);
         TileType tile = grid.getTile(pos);
@@ -78,8 +99,13 @@ public class GameMap {
     }
 
 
-    // adds a buildable to the map. Returns -1 if not successfully added. Returns
-    // the building ID if successfully added.
+    /**
+     * Tries to add a building to the map at that point. 
+     * @param type The type of the building to add.
+     * @param posX The x coord of the building.
+     * @param posY The y coord of the building.
+     * @return true if successfully added and false if not.
+     */
     public boolean addBuilding(BuildingType type, int posX, int posY) {
         Vector2i pos = new Vector2i(posX, posY);
         
@@ -87,7 +113,7 @@ public class GameMap {
             Building building = buildingFactory.createBuilding(BuildingType.Accommodation, pos);
             if (grid.addBuilding(building) == false) return false;
             buildings.put(pos, building);
-            housingSystem.onBuildingBuilt(building.housingComponent, building);
+            housingSystem.fillHome(building);
             if (Consts.BUILDING_PLACEMENT_DEBUG_MODE_ON) {
                 Gdx.app.log("GameMap", "Adding " + building.getType() + " at " + pos.toString());
             }
@@ -106,8 +132,12 @@ public class GameMap {
         return false;
     }
 
-    // Removes a buildable from the map where the building is at the point pos. Returns true
-    // if successful and false otherwise
+    /**
+     * Tries to remove a building from the map at the specified point. 
+     * @param posX The x coord of the point.
+     * @param posY The y coord of the point.
+     * @return true if successfully removed and false if not.
+     */
     public boolean removeBuildingAtPoint(int posX, int posY) {
         Vector2i pos = new Vector2i(posX, posY);
         TileType tile = grid.getTile(pos);
@@ -130,8 +160,8 @@ public class GameMap {
             if (buildings.containsKey(pos) == false) return false;
             
             Building building = buildings.get(pos);
-            if (building.getType() == BuildingType.Accommodation) {
-                housingSystem.onBuildingDestroyed(building.housingComponent);
+            if (building.housingComponent != null) {
+                housingSystem.killEmAll(building);
             }
             grid.removeBuilding(building);
             buildings.remove(pos);
@@ -143,45 +173,72 @@ public class GameMap {
 
         return false;
     }
-    // Removes paths and buildings.
+    
+    /**
+     * Attempts to remove either a path or a building at the point specified.
+     * @param posX The x coord of the point.
+     * @param posY The y coord of the point.
+     * @return true if a path or building was removed and false otherwise.
+     */
     public boolean removeBuildableAtPoint(int posX, int posY) {
         if (removePath(posX, posY)) return true;
         return removeBuildingAtPoint(posX, posY);
     }
 
 
-    // Finds a building with the closest activity. TODO: VERY INEFFCIENT SINCE MANY findPath() CALLS
-    // DEFINETELY OPTIMISE IF PERFORMANCE ISSUES.
-    public ArrayList<Vector2i> findBuildingPathWithActivity(Status status, int posX, int posY) {
-        ArrayList<Vector2i> closestBuilding = null;
+    /**
+     * Finds the nearest building with a {@link BuildingActivityComponent} that
+     * has the same activity as specified and where the ActivityComponent allows
+     * walkins and the building is not full.
+     * @param startPosX The x coord to start the search at.
+     * @param startPosY The y coord to start the search at.
+     * @param activity The type of activity to find.
+     * @return The activity of the building. Can be null if no activity found.
+     */
+    public StudentActivity findNearestActivity(int startPosX, int startPosY, Student.Activity activity) {
+        // TODO: definitely optimise.
+        Building closestBuilding = null;
         ArrayList<Vector2i> currPath;
+
         int distance = Integer.MAX_VALUE;
         int currDistance;
-        Vector2i pos = new Vector2i(posX, posY);
+        Vector2i pos = new Vector2i(startPosX, startPosY);
 
         for (Building b : buildings.values()) {
-            if (b.activityComponent.toDo == status) {
+            if (
+            b.activityComponent.activityType == activity && 
+            b.activityComponent.isWalkIn == true && 
+            b.enterableComponent.isFull() == false
+            ) {
                 currPath = findPath(pos, b.pos);
                 if (currPath == null) continue;
                 currDistance = currPath.size();
                 if (currDistance < distance) {
                     distance = currDistance;
-                    closestBuilding = currPath;
+                    closestBuilding = b;
                 }
             }
         }
-        return closestBuilding;
+
+        if (closestBuilding == null) return null;
+        return closestBuilding.getActivity();
     }
 
 
-    // updates all buildings with events
+    /**
+     * Updates all the buildings with events.
+     * @param deltaTime Time since last frame.
+     */
     public void update(float deltaTime) {
         for (Building b : buildings.values()) {
             eventSystem.updateBuilding(b, deltaTime);
         }
     }
 
-
+    /**
+     * Draws the grid and then all buildings in that order.
+     * @param batch 
+     */
     public void draw(SpriteBatch batch) {
         // draws the map. Does not draw buildings.
         grid.draw(batch);

@@ -5,7 +5,6 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.math.MathUtils;
 
 // This class is used to control how the camera moves based on user inputs.
 public class CameraManager {
@@ -14,7 +13,7 @@ public class CameraManager {
     public CameraManager(Camera camera) {
         this.camera = (OrthographicCamera)camera;
     }
-
+    
     public void processCameraInput() {
         // WASD moves the camera in associated directions.
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {

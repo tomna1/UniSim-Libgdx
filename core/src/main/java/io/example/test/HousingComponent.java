@@ -1,7 +1,10 @@
 package io.example.test;
 
-// A component that can be added to the building class. It stores the studentIDs
-// of students who house this is. This component is manipulated by the HousingSystem.
+/**
+ * A component that can be added to the {@link Building} class. It stores the studentIDs
+ * of students who house this is. This component is manipulated by the {@link HousingSystem}.
+ * @author Thomas Nash
+*/
 public class HousingComponent {
     // The IDS of students this building is home to.
     private int[] homeTo;
@@ -17,9 +20,20 @@ public class HousingComponent {
         maxCount = houseMaxStudentCount;
     }
 
+    /**
+     * @return The amount of students this houses.
+     */
     public int count() { return homeToCount; }
+    /**
+     * @return True if full and false if not.
+     */
     public boolean isFull() { return homeToCount >= maxCount; }
 
+    /**
+     * Checks to see whether this studentID is in the data.
+     * @param studentID ID of the student.
+     * @return true if it is and false if not.
+     */
     public boolean containsStudent(int studentID) {
         for (int i = 0; i < homeToCount; i++) {
             if (homeTo[i] == studentID) return true;
@@ -27,7 +41,11 @@ public class HousingComponent {
         return false;
     }
 
-    // returns true if successfully added and false if not.
+    /**
+     * Attempts to add a studentID to the home.
+     * @param studentID ID of the student.
+     * @return true if successfully added and false otherwise.
+     */
     public boolean addStudentToHome(int studentID) {
         if (homeToCount >= maxCount) return false;
         homeTo[homeToCount] = studentID;
@@ -35,6 +53,11 @@ public class HousingComponent {
         return true;
     }
 
+    /**
+     * Attempts to remove a student from the home.
+     * @param studentID ID of the student.
+     * @return true if successfully removed and false if not.
+     */
     public boolean removeStudentFromHome(int studentID) {
         for (int i = 0; i < homeToCount; i++) {
             if (homeTo[i] == studentID) {
@@ -48,8 +71,10 @@ public class HousingComponent {
         return false;
     }
 
-    // removes the last studentID from the component and returns it. Returns -1
-    // if no valid student to remove. 
+    /**
+     * Removes a random studentID from the home and returns it. 
+     * @return ID of a student or -1 if not studentID to return.
+     */
     public int pop() {
         if (homeToCount <= 0) return -1;
         homeToCount--;

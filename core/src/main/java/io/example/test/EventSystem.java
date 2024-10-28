@@ -2,8 +2,10 @@ package io.example.test;
 
 import com.badlogic.gdx.Gdx;
 
-// This system is used to manipulated the building event component of 
-// a building.
+/** 
+ * This system is used to manipulate the {@link BuildingEventComponent} of a building.
+ * @author Thomas Nash
+*/
 public class EventSystem {
     StudentManager studentManager;
     
@@ -11,7 +13,13 @@ public class EventSystem {
         this.studentManager = studentManager;
     }
 
-    // updates all buildings that have the event component
+    /**
+     * Updates all buildings that have an event component. Will automatically call
+     * necessary {@link StudentManager#processEvent(StudentActivity)} each time an event
+     * gets restarted.
+     * @param building The building with the event component.
+     * @param deltaTime The time since the last frame.
+     */
     public void updateBuilding(Building building, float deltaTime) {
         if (building.eventComponent == null) return;
         if (building.activityComponent == null) return;
@@ -48,7 +56,6 @@ public class EventSystem {
                 }
                 studentManager.processEvent(building.getActivity());
             }
-            
         }
     }
 }

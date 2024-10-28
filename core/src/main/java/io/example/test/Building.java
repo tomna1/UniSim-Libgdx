@@ -3,7 +3,13 @@ package io.example.test;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-// A building that students should be able to enter and leave.
+/**
+ * A class which represents a building that can be placed on the map. The building
+ * is made up of components which defines its functionality. A building must
+ * have a {@link EnterableComponent} and a {@link BuildingActivityComponent}. The
+ * other components are optional.
+ * @author Thomas Nash
+ */
 public class Building {
     public enum BuildingType {
         LectureTheatre, 
@@ -11,8 +17,10 @@ public class Building {
         Restaurant,
     }
     
-    // The position works as an ID as 2 buildings cannot have the same
-    // position.
+    /**
+     * The position of the building. Also works as an ID since no 2 buildings
+     * can have the same position.
+     */
     public Vector2i pos;
 
     // Used for drawing and pathfinding.
@@ -37,6 +45,12 @@ public class Building {
     // event). More information can be found in the BuildingEventComponent class. OPTIONAL COMPONENT
     public BuildingEventComponent eventComponent;
 
+    /**
+     * Creates a new building with the specified position. The type of the 
+     * building defines which texture is used.
+     * @param pos Position of the building.
+     * @param type Type of the building.
+     */
     public Building(Vector2i pos, BuildingType type) {
         this.pos = pos;
         this.type = type;
@@ -49,15 +63,23 @@ public class Building {
         } else texture = Assets.couldNotLoad;
     }
 
-
+    /**
+     * @return The type of the building.
+     */
     public BuildingType getType() { return type; }  
 
+    /**
+     * @return The width of the building.
+     */
     public int getWidth() {
         if (type == BuildingType.Accommodation) { return Consts.ACCOMMODATION_WIDTH; }
         else if (type == BuildingType.LectureTheatre) { return Consts.LECTURE_THEATRE_WIDTH; }
         else if (type == BuildingType.Restaurant) { return Consts.RESTAURANT_WIDTH; }
         else { return 1; }
     }
+    /**
+     * @return The height of the building.
+     */
     public int getHeight() {
         if (type == BuildingType.Accommodation) { return Consts.ACCOMMODATION_HEIGHT; }
         else if (type == BuildingType.LectureTheatre) { return Consts.LECTURE_THEATRE_HEIGHT; }
@@ -65,12 +87,22 @@ public class Building {
         else { return 1; }
     }
 
-    // Called by the student to allow a student to get an activity.
+    /**
+     * Each building has an activity that is defined by its 
+     * {@link BuildingActivityComponent} and can also be defined by its
+     * {@link BuildingEventComponent}. This returns a StudentActivity
+     * based on those 2 components.
+     * @return Activity of building.
+     */
     public StudentActivity getActivity() {
         return new StudentActivity(this);
     }
 
 
+    /**
+     * Draws the building onto the screen.
+     * @param batch
+     */
     public void draw(SpriteBatch batch) {
         if (texture != null) {
             batch.draw(texture, pos.x, pos.y, getWidth(), getHeight());

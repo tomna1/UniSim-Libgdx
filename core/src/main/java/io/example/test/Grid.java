@@ -9,16 +9,23 @@ import java.util.Queue;
 import java.util.ArrayList;
 import java.util.LinkedList;
 
-// A grid contains informtion about each specific tile in the game.
-// Will be used to check if a building can be added to the map or not and
-// used for pathfinding.
+/**
+ * The grid contains information about each specific tile in the {@link GameMap}.
+ * It is mainly used for pathfinding and checking if buildings can be placed in
+ * certain places.
+ * @author Thomas Nash
+ */
 public class Grid {
     private Tile[][] tiles;
     
     private int width;
     private int height;
 
-
+    /**
+     * Creates a new grid with the specified width and height.
+     * @param width The width of the grid. Should be >= 1.
+     * @param height The height of the grid. Should be >= 1.
+     */
     public Grid(int width, int height) {
         tiles = new Tile[height][width];
         for (int i = 0; i < height; i++) {
@@ -30,9 +37,20 @@ public class Grid {
         this.height = height;
     }
 
+    /**
+     * @return The width of the grid.
+     */
     public int getWidth() { return width; }
+    /**
+     * @return The height of the grid.
+     */
     public int getHeight() { return height; }
 
+    /**
+     * Checks if there is a building at a point on the grid.
+     * @param pos The point to check.
+     * @return true if there is a building and false otherwise.
+     */
     public boolean isBuildingAtPoint(Vector2i pos) {
         TileType tile = getTile(pos);
         if (tile == null) return false;
@@ -40,7 +58,11 @@ public class Grid {
         return false;
     }
 
-    // Returns true if the coordinates are located within the grid.
+    /**
+     * Checks if the position is within the confines of the grid.
+     * @param pos The point to check.
+     * @return true if the position is within the grid and false otherwise.
+     */
     public boolean posWithinGrid(Vector2i pos) {
         if (pos.x < 0 || pos.y < 0) return false;
         if (pos.x >= width || pos.y >= height) return false;
@@ -48,26 +70,35 @@ public class Grid {
         return true;
     }
 
-    // Checks if a building can fit within the dimension of the grid. Does not
-    // check if there is actual space in the grid.
-    private boolean canBuildingFitInGrid(Building b) {
-        if (b.pos.x < 0 || b.pos.y < 0) return false;
+    /**
+     * Checks if a building can fit within the dimensions of the grid. Does not
+     * check if there is another anything blocking the builing from being built
+     * in that position such as another building
+     * @param building The building to check.
+     * @return true if it can fit and false otherwise.
+     */
+    private boolean canBuildingFitInGrid(Building building) {
+        if (building.pos.x < 0 || building.pos.y < 0) return false;
         
         if (
-            b.pos.x + b.getWidth() > width ||
-            b.pos.y + b.getHeight() > height
+            building.pos.x + building.getWidth() > width ||
+            building.pos.y + building.getHeight() > height
         ) return false;
 
         return true;
     }
 
-    // Returns true if there is enough space in the grid to fit a building at a point.
-    public boolean canAddBuilding(Building b) {
-        if (canBuildingFitInGrid(b) == false) return false;
-        int posX = b.pos.x;
-        int posY = b.pos.y;
-        int width = b.getWidth();
-        int height = b.getHeight();
+    /**
+     * Checks to see whether a building can be added to the grid. 
+     * @param building The building.
+     * @return true if it can be added and false otherwise.
+     */
+    public boolean canAddBuilding(Building building) {
+        if (canBuildingFitInGrid(building) == false) return false;
+        int posX = building.pos.x;
+        int posY = building.pos.y;
+        int width = building.getWidth();
+        int height = building.getHeight();
         // Checks all tiles that the building work take up are empty.
         for (int i = posY; i < posY + height; i++) {
             for (int j = posX; j < posX + width; j++) {
@@ -77,14 +108,22 @@ public class Grid {
         return true;
     }
 
-    // Returns the tiletype at a particular coorindate. Returns null if outside range.
+    /**
+     * Returns the TileType at a particular coordinate.
+     * @param pos The coordinate.
+     * @return TileType/null if out of range.
+     */
     public TileType getTile(Vector2i pos) {
         if (posWithinGrid(pos) == false) return null;
         return tiles[pos.y][pos.x].getTileType();
     }
 
-    // Returns true if a particular tile on the grid is walkable. A tile is 
-    // walkable if there is a path or building there.
+    /**
+     * Returns true if a particular tile on the grid is walkable. A tile is 
+     * walkable if there is a path or building already there.
+     * @param pos The coordinate.
+     * @return true if walkable and false otherwise.
+     */
     public boolean isWalkable(Vector2i pos) {
         if (posWithinGrid(pos) == false) return false;
         TileType tile = tiles[pos.y][pos.x].getTileType();
@@ -93,7 +132,11 @@ public class Grid {
     }
 
 
-    // Adds a singular path tile to the grid.
+    /**
+     * Attempts to add a singular path tile to the grid.
+     * @param pos The point at which to add the path.
+     * @return true if successfully added and false otherwise.
+     */
     public boolean addPath(Vector2i pos) {
         if (posWithinGrid(pos) == false) return false;
         if (tiles[pos.y][pos.x].getTileType() != TileType.Empty) return false;
@@ -104,13 +147,12 @@ public class Grid {
         return true;
     }
 
-    // Adds a straight path to the grid from start to end.
-    public boolean addStraightPath(Vector2i start, Vector2i end) {
-        // TODO: IMPLEMENT
-        return true;
-    }
 
-    // Removes a singular path tile from the grid.
+    /**
+     * Attempts to remove a singular path tile from the grid.
+     * @param pos The point at which to remove the path.
+     * @return true is successfully removed and false otherwise.
+     */
     public boolean removePath(Vector2i pos) {
         if (posWithinGrid(pos) == false) return false;
         if (tiles[pos.y][pos.x].getTileType() != TileType.Path) return false;
@@ -121,15 +163,18 @@ public class Grid {
         return true;
     }
 
-    // Adds a building to the grid. Returns true if successfully added and false
-    // otherwise.
-    public boolean addBuilding(Building b) {
-        if (canAddBuilding(b) == false) return false;
+    /**
+     * Attempts to add a building to the grid.
+     * @param building The building to add.
+     * @return true if successfully added and false otherwise.
+     */
+    public boolean addBuilding(Building building) {
+        if (canAddBuilding(building) == false) return false;
 
-        int posX = b.pos.x;
-        int posY = b.pos.y;
-        int width = b.getWidth();
-        int height = b.getHeight();
+        int posX = building.pos.x;
+        int posY = building.pos.y;
+        int width = building.getWidth();
+        int height = building.getHeight();
         // Adds the building
         int i = posY;
         for (int j = posX+1; j < posX + width; j++) {
@@ -149,15 +194,22 @@ public class Grid {
     // ISSUE: POSSIBLE ISSUE AS A USER MAY BE ABLE TO REMOVE A DIFFERENT TYPE
     // OF BUILDING FROM THE ONE THAT WAS PLACED. THE GAMEMAP SHOULD FIX THIS
     // AS A TILE SHOULD ONLY BE ASSOCIATED WITH A SINGLE BUILDING BUT ANYTHING
-    // IS POSSIBLE. Removes a building from the grid.
-    public boolean removeBuilding(Building b) {
-        int posX = b.pos.x;
-        int posY = b.pos.y;
+    // IS POSSIBLE. 
+    
+    /**
+     * Attempts to remove a building from the grid. Note that this will not remove
+     * the building from the buildings array in the {@link GameMap} class.
+     * @param building The building to remove/
+     * @return true is successfully removed and false otherwise.
+     */
+    public boolean removeBuilding(Building building) {
+        int posX = building.pos.x;
+        int posY = building.pos.y;
 
         if (tiles[posY][posX].getTileType() != TileType.BuildingBL) return false;
 
-        int width = b.getWidth();
-        int height = b.getHeight();
+        int width = building.getWidth();
+        int height = building.getHeight();
 
         // Removes all building tiles
         for (int i = posY; i < posY + height; i++) {
@@ -170,9 +222,16 @@ public class Grid {
     }
 
 
-    // Finds a valid path between a start point and an end point. Will return null if
-    // the path is not possible. If start and end are the same, will return array of size 1
-    // contains that node.
+    /**
+     * Tries to find a valid path between 2 point. Note that both the
+     * start and end points can be the bottom left corner of the building
+     * but every other tile has to be a path tile.
+     * @param start The start position.
+     * @param end The end position.
+     * @return An ArrayList containing each point on the path to the end point.
+     * Returns null if path was not found. Note that if start an end are the same
+     * the path will be of size=1 containing that node.
+     */
     public ArrayList<Vector2i> findPath(Vector2i start, Vector2i end) {
         // TODO: OPTIMISE, A*.
         ArrayList<Vector2i> path = new ArrayList<>();
@@ -276,11 +335,13 @@ public class Grid {
             Gdx.app.log("Grid", "Could not find path between " + start.toString() + " and " + end.toString());
         }
         return null;
-        
     }
 
 
-    // Draws all the tiles that make up the grid.
+    /**
+     * Draws all tiles that make up the grid.
+     * @param batch
+     */
     public void draw(SpriteBatch batch) {
         // Draw all tiles. If they are a building tile, will draw grass instead.
         for (int i = 0; i < height; i++) {

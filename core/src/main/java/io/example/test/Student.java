@@ -50,13 +50,21 @@ public class Student {
     // how long until the student finishes what they are currently doing.
     private float timeUntilFree;
 
-    public enum Status {
+    private enum Status {
         Free, // they are not doing anything
         Waiting, // waiting for an building event to start
         Eating, 
         Sleeping,
         InLecture,
         Travelling // moving STUDENT ARE ONLY DRAWN WHEN THEY ARE MOVING.
+    }
+
+    // Activity is used by the studentActivity class and building activity component to define
+    // what activity a student can do.
+    public enum Activity {
+        Eat,
+        Sleep,
+        AttendLecture
     }
     
     Student(GameMap gameMap, int ID, String name, Colours colour, Building home) {
@@ -119,13 +127,15 @@ public class Student {
         // Will automatically override what the student is currently doing and
         // make them participate in the event.
 
-        if (wantsToLearn() == false) return false;
+        if (studentActivity.getType() == Student.Activity.AttendLecture && wantsToLearn() == false) return false;
+        if (studentActivity.getType() == Student.Activity.Eat && isHungry() == false) return false;
+        if (studentActivity.getType() == Student.Activity.Sleep && isSleepy() == false) return false;
 
         if (studentActivity.isValidStudent(this) == false) {
             return false;
         }
-        if (canDoActivityAtBuilding(studentActivity.getBuilding())) {
-            doActivityAtBuilding(studentActivity.getBuilding());
+        if (canDoActivity(studentActivity)) {
+            doActivity(studentActivity);
             return true;
         }
         return false;
@@ -137,25 +147,33 @@ public class Student {
     public void update(float deltaTime, boolean updateMeters) {
         // updates the internal meters of the student
         if (updateMeters) {
-            applyMeterLoss(true, true, true);
-            if (status == Status.Eating) hungerMeter += Consts.HUNGER_METER_GAIN;
-            else if (status == Status.Sleeping) sleepMeter += Consts.SLEEP_METER_GAIN;
-            else if (status == Status.InLecture) learningMeter += Consts.LEARNING_METER_GAIN;;
+            if (status == Status.Eating) {
+                hungerMeter += Consts.HUNGER_METER_GAIN;
+                applyMeterLoss(true, true, false);
+            }
+            else if (status == Status.Sleeping) {
+                sleepMeter += Consts.SLEEP_METER_GAIN;
+                applyMeterLoss(true, false, true);
+            }
+            else if (status == Status.InLecture) {
+                learningMeter += Consts.LEARNING_METER_GAIN;
+                applyMeterLoss(false, true, true);
+            }
+            else {
+                applyMeterLoss(true, true, true);
+            }
             validateMeters();
         }
 
         if (status == Status.Waiting) {
             if (activity == null) {
                 setStatusFree();
-                return;
             }
             if (activity.hasEnded()) {
                 setStatusFree();
                 activity = null;
-                return;
             }
             if (activity.canStartActivity()) activity.startActivity(this);
-            else return;
         }
 
         // moves the student.
@@ -175,14 +193,17 @@ public class Student {
         if (status == Status.Free) {
             posI.x = (int)pos.x;
             posI.y = (int)pos.y;
-            if (isSleepy()) {
-                if (canDoActivityAtBuilding(home)) doActivityAtBuilding(home);
+            if (isHungry()) {
+                activity = gameMap.findNearestActivity(posI.x, posI.y, Student.Activity.Eat);
+                if (canDoActivity(this.activity)) {
+                    doActivity(this.activity);
+                    return;
+                }
             }
-            else if (isHungry()) {
-                path = gameMap.findBuildingPathWithActivity(Status.Eating, (int)pos.x, (int)pos.y);
-                if (path != null) {
-                    Building building = gameMap.getBuildingAtPoint(path.get(path.size()-1).x, path.get(path.size()-1).y);
-                    if (canDoActivityAtBuilding(building)) doActivityAtBuilding(building);
+            if (isSleepy()) {
+                activity = home.getActivity();
+                if (canDoActivity(this.activity)) {
+                    doActivity(this.activity);
                     return;
                 }
             }
@@ -212,8 +233,12 @@ public class Student {
         if (hungerMeter) this.hungerMeter += Consts.HUNGER_METER_LOSS;
     }
 
+
     
-    // Moves the student based on the path. Should only be called by the update method.
+    /**
+     * Moves the students based on the currently set {@link #path} variable.
+     * @param deltaTime The time since last frame.
+     */
     private void move(float deltaTime) {
         if (path.size() == 0) {
             onDestinationReached();
@@ -277,19 +302,20 @@ public class Student {
     }
 
     // Checks whether the activity at the building can be done.
-    private boolean canDoActivityAtBuilding(Building building) {
+    private boolean canDoActivity(StudentActivity activity) {
+        if (activity == null) return false;
         posI.x = (int)pos.x;
         posI.y = (int)pos.y;
-        path = gameMap.findPath(posI, building);
+        path = gameMap.findPath(posI, activity.getPos());
         if (path == null) return false;
         return true;
     }
-    private void doActivityAtBuilding(Building building) {
-        if (canDoActivityAtBuilding(building) == false) return;
-        activity = building.getActivity();
+    private void doActivity(StudentActivity activity) {
+        if (canDoActivity(activity) == false) return;
+        this.activity = activity;
         status = Status.Travelling;
         if (Consts.STUDENT_ACTIVITY_DEBUG_MODE_ON) {
-            Gdx.app.log("Student", "Student "+ID+" is now travelling to " + building.toString());
+            Gdx.app.log("Student", "Student "+ID+" is now travelling to " + activity.toString());
         }  
     }
 

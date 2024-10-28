@@ -1,6 +1,10 @@
 package io.example.test;
 
-// Each tile is a 1x1 block on the grid. 
+/**
+ * Each tile is a 1x1 block on the grid.
+ * @author Thomas Nash
+ * @see Grid
+ */
 public class Tile {
     public enum TileType {
         Empty,

@@ -3,10 +3,15 @@ package io.example.test;
 import java.util.ArrayList;
 import io.example.test.GameManager.Colours;
 
-// A building Event is a building activity but with a time limit and when the event is first
-// activated by the building, it will ping all valid students to come to the building. This
-// will give all valid students a StudentActivityComponent which they can use to enter the event.
-// Events override the current activity a student is doing. 
+/** A building Event is a building activity but with a time limit. Events are split
+ * into 3 time phases. The {@link #timeToStart} which indicates how long until the event starts.
+ * The {@link #eventDuration} which indicates how long the event will last and the 
+ * {@link #timeBeforeRestart} which indicates how long to wait after the event has ended 
+ * before it restarts. When an event restarts, valid students are pinged about it. 
+ * Events override the current activity a student is doing.
+ * @author Thomas Nash
+ * @see EventSystem
+ */ 
 public class BuildingEventComponent {
     
     // The colours of various students this event is for. If empty,
@@ -17,11 +22,6 @@ public class BuildingEventComponent {
     // The StudentActivity class uses it to check if an event has ended.
     private int eventCount = 0;
 
-    // Each event has a timeToStart, an event duration and a timeBetweenEvents.
-    // timeToStart is the amount of time before an events starts
-    // eventDuration is the amount of time an event lasts
-    // timeBetweenEvents is the amount of time after an event has finished for the
-    // event to be restarted
 
     private float timeToStart;
     public float timeUntilStarts;
@@ -41,8 +41,17 @@ public class BuildingEventComponent {
         timeBeforeRestart = timeBetweenEvents;
     }
 
+    /**
+     * The event count value is incremented each time this event is restarted. In that
+     * way it essentially acts as a way to check if the event has ended.
+     * @return int
+     */
     public int getEventCount() { return eventCount; }
 
+    /**
+     * Restarts the event which resets {@link #timeUntilStarts}, {@link #timeLeft}
+     * and {@link #timeBeforeRestart}. Will also increment {@link #eventCount}.
+     */
     public void restartEvent() {
         timeUntilStarts = timeToStart;
         timeLeft = eventDuration;
@@ -50,6 +59,11 @@ public class BuildingEventComponent {
         eventCount++;
     }
 
+    /**
+     * Adds a valid colour to the event. Only students with the same colour
+     * as one of the valid colours of this event can attend.
+     * @param colour The new colour.
+     */
     public void addValidColour(Colours colour) {
         if (validStudents.contains(colour) == false) {
             validStudents.add(colour);
