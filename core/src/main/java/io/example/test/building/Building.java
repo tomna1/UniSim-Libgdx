@@ -74,7 +74,7 @@ public class Building {
     public BuildingType getType() { return type; }  
 
     /**
-     * @return The width of the building.
+     * @return The width of the building based on its type.
      */
     public int getWidth() {
         if (type == BuildingType.Accommodation) { return Consts.ACCOMMODATION_WIDTH; }
@@ -83,7 +83,7 @@ public class Building {
         else { return 1; }
     }
     /**
-     * @return The height of the building.
+     * @return The height of the building based on its type.
      */
     public int getHeight() {
         if (type == BuildingType.Accommodation) { return Consts.ACCOMMODATION_HEIGHT; }

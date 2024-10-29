@@ -8,6 +8,10 @@ import io.example.test.util.Consts;
 
 /** 
  * This system is used to manipulate the {@link BuildingEventComponent} of a building.
+ * The {@link #updateBuilding(Building, float)} method will update the 
+ * {@link BuildingEventComponent} and if the event is restarted, it will ping all
+ * necessary students about the event by calling the {@link StudentManager#processEvent(StudentActivity)} 
+ * method.
  * @author Thomas Nash
 */
 public class EventSystem {

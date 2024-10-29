@@ -19,7 +19,7 @@ import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.Vector2;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. 
- * This is the main file of the game.
+ * This is the main file of the game where the game loop takes place.
  * @author Thomas Nash
 */
 public class Main extends Game {
@@ -98,6 +98,9 @@ public class Main extends Game {
         draw();
     }
 
+    /**
+     * All input stuff goes into this method.
+     */
     private void input() {
         screenMousePos.set(Gdx.input.getX(), Gdx.input.getY());
         worldMousePos.set(screenMousePos);
@@ -108,11 +111,17 @@ public class Main extends Game {
         gameManager.processInput(worldMousePos);
     }
 
+    /**
+     * All logic should happen in this method.
+     */
     private void logic() {
         float delta = Gdx.graphics.getDeltaTime();
         gameManager.update(delta);
     }
 
+    /**
+     * All drawing should take place in this method.
+     */
     private void draw() {
         // Clears the screen to red.
         ScreenUtils.clear(Color.RED);

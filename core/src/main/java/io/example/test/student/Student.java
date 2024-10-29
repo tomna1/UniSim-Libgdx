@@ -13,7 +13,12 @@ import io.example.test.util.Assets;
 import io.example.test.util.Consts;
 import io.example.test.util.Vector2f;
 import io.example.test.util.Vector2i;
-/* */
+/**
+ * This class represents a student at university. It is able to be move around
+ * the university and complete tasks based on the buildings at placed on the
+ * map. The student has internal meters which represent its satisfaction.
+ * @author Thomas Nash
+ */
 public class Student {
     // The map the student uses for pathfinding.
     private GameMap gameMap;
@@ -59,9 +64,9 @@ public class Student {
     private enum Status {
         Free, // they are not doing anything
         Waiting, // waiting for an building event to start
-        Eating, 
-        Sleeping,
-        InLecture,
+        Eating, // Doing an eat activity.
+        Sleeping, // Doing a sleep activity.
+        InLecture, // Doing an AttendLecture activity.
         Travelling // moving STUDENT ARE ONLY DRAWN WHEN THEY ARE MOVING.
     }
 
@@ -115,6 +120,11 @@ public class Student {
         return false;
     }
 
+    /**
+     * Gets the satisfaction of the student based on the value of the internal meters
+     * and the set {@link Consts#SATISIFIED_METER_AMOUNT}.
+     * @return 0-100 inclusively. Represents a percentage.
+     */
     public float getSatisfaction() {
         // Satisfaction can be 0-100 inclusively. A student is fully satisfied if
         // all their interal meters are about the satisfied meter amount.
@@ -128,7 +138,14 @@ public class Student {
         return (hungerSatisfaction + sleepSatisfaction + learningSatisfaction) / 3;
     }
 
-    // Returns true is successfully processed and false if not
+    /**
+     * Checks whether a student can complete the activity. A student cannot
+     * complete an activity if the internal meter associated with that activity
+     * is not low enough, the student is not a colour that is allowed to do
+     * the activity or if the student cannot find a path to the activity.
+     * @param studentActivity The activity to complete.
+     * @return true if they are going to do the event and false if not.
+     */
     public boolean processEvent(StudentActivity studentActivity) {
         // Will automatically override what the student is currently doing and
         // make them participate in the event.
@@ -148,8 +165,14 @@ public class Student {
     }
 
 
-    // update function will update all the meter associated with the student and move
-    // the student if they are travelling. Basically where the student AI is located.
+    /**
+     * This function will update all meters associated with the student,
+     * move the student if they are travelling and continue doing an activity
+     * if the student is doing an activity. It is basically where the student
+     * AI is located.
+     * @param deltaTime The time since the last frame.
+     * @param updateMeters true if the internal meters of the student should be updated.
+     */
     public void update(float deltaTime, boolean updateMeters) {
         // updates the internal meters of the student
         if (updateMeters) {
@@ -219,8 +242,11 @@ public class Student {
         }
     }
 
-    // Will make sure that all meters are within the min and max value range inclusively. ONLY CALLED
-    // BY UPDATE METHOD.
+    /**
+     * Will make sure that all meters are within the range set by the 
+     * {@link Consts#MIN_METER_AMOUNT} and {@link Consts#MAX_METER_AMOUNT}
+     * inclusively.
+     */
     private void validateMeters() {
         if (learningMeter < Consts.MIN_METER_AMOUNT) learningMeter = Consts.MIN_METER_AMOUNT;
         else if (learningMeter > Consts.MAX_METER_AMOUNT) learningMeter = Consts.MAX_METER_AMOUNT;
@@ -231,8 +257,13 @@ public class Student {
         if (hungerMeter < Consts.MIN_METER_AMOUNT) hungerMeter = Consts.MIN_METER_AMOUNT;
         else if (hungerMeter > Consts.MAX_METER_AMOUNT) hungerMeter = Consts.MAX_METER_AMOUNT;
     }
-    // Will apply loss to the meters specified in the function. Does not guarantee
-    // the meters will be between min and max values. ONLY CALLED BY UPDATE METHOD.
+    /**
+     * Will apply meter loss to the meters specified in the method. Should only be called
+     * by the update method.
+     * @param learningMeter 
+     * @param sleepMeter
+     * @param hungerMeter
+     */
     private void applyMeterLoss(boolean learningMeter, boolean sleepMeter, boolean hungerMeter) {
         if (learningMeter) this.learningMeter += Consts.LEARNING_METER_LOSS;
         if (sleepMeter) this.sleepMeter += Consts.SLEEP_METER_LOSS;
@@ -294,20 +325,29 @@ public class Student {
         }
     }
 
-    // This method should be called whenever the student reaches its target destinatiom.
-    // This method requires the activity variable should already be set.
+    /**
+     * This method should be called whenever a students reaches its target destination.
+     * It will start the activity based on the {@link #activity} set.
+     */
     private void onDestinationReached() {
         if (activity.canStartActivity()) activity.startActivity(this);   
         else status = Status.Waiting;
     }
 
-    // When an activity is finshed, this method should be called.
+    /**
+     * When a student finishes an activity this method should be called. 
+     * It wiull call {@link StudentActivity#endActivity(Student)}.
+     */
     private void onActivityFinished() {
         activity.endActivity(this);
         activity = null;
     }
 
-    // Checks whether the activity at the building can be done.
+    /**
+     * Checks whether there is a valid path to an activity.
+     * @param activity The specified activity.
+     * @return true if valid path and false if not.
+     */
     private boolean canDoActivity(StudentActivity activity) {
         if (activity == null) return false;
         posI.x = (int)pos.x;
@@ -316,6 +356,11 @@ public class Student {
         if (path == null) return false;
         return true;
     }
+    /**
+     * Starts moving towards the activity based on the location of the 
+     * activity.
+     * @param activity The activity to complete.
+     */
     private void doActivity(StudentActivity activity) {
         if (canDoActivity(activity) == false) return;
         this.activity = activity;
@@ -326,8 +371,11 @@ public class Student {
     }
 
 
-    // Will make the student sleep for that set amount of time. Should only be called
-    // by StudentActivity.
+    /**
+     * Will make the student sleep for that amount of time. Should ony be called
+     * by {@link StudentActivity}.
+     * @param time The amount of time to sleep for.
+     */
     protected void sleep(float time) {
         status = Status.Sleeping;
         timeUntilFree = time;
@@ -335,8 +383,11 @@ public class Student {
             Gdx.app.log("Student", "Student " + ID + " is now sleeping for " + time + " seconds.");
         }
     }
-    // Will make the student eat for that amount of time. Should only be called
-    // by StudentActivity.
+    /**
+     * Will make the student eat for that amount of time. Should ony be called
+     * by {@link StudentActivity}.
+     * @param time The amount of time to eat for.
+     */
     protected void eat(float time) {
         status = Status.Eating;
         timeUntilFree = time;
@@ -345,8 +396,11 @@ public class Student {
         }
     
     }
-    // Will make the student attend the lecture for that amoumt of time. Should only be called
-    // by StudentActivity.
+    /**
+     * Will make the student attend a lecture for that amount of time. Should ony be called
+     * by {@link StudentActivity}.
+     * @param time The amount of time to attend lecture for.
+     */
     protected void attendLecture(float time) {
         status = Status.InLecture;
         timeUntilFree = time;
@@ -355,7 +409,10 @@ public class Student {
         }
     }
 
-    // Draws student
+    /**
+     * Draws the student onto the screen.
+     * @param batch
+     */
     public void draw(SpriteBatch batch) {
         sprite.setX(pos.x);
         sprite.setY(pos.y);

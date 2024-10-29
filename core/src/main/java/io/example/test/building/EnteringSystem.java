@@ -2,7 +2,8 @@ package io.example.test.building;
 
 /** 
  * This class is used to add and remove students from a building by manipulating
- * the {@link EnterableComponent} of that Building.
+ * the {@link EnterableComponent} of that Building. It essentially allows student
+ * to enter and exit a building.
  * @author Thomas Nash
  */
 public class EnteringSystem {

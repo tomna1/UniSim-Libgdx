@@ -31,7 +31,6 @@ public class BuildingFactory {
      * and the components added to the building.
      * @param pos The position of the building to be created.
      * @return Building object. WARNING: Some components may be null.
-     * @author Thomas Nash
      */
     public Building createBuilding(BuildingType type, Vector2i pos) {
         if (type == BuildingType.Accommodation) return createAccommodation(pos);

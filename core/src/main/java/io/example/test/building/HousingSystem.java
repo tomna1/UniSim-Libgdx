@@ -3,7 +3,7 @@ package io.example.test.building;
 import io.example.test.student.StudentManager;
 
 /**
- * This system is used to affect the {@link HousingComponent} of a building.
+ * This system is used to manipulate the {@link HousingComponent} of a building.
  * Will create new students and add them to the house and {@link StudentManager} and
  * will remove students from the house and {@link StudentManager}. 
  * @author Thomas Nash

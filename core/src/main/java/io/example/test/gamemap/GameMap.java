@@ -21,7 +21,8 @@ import io.example.test.util.Consts;
 import io.example.test.util.Vector2i;
 
 /**
- * Stores all the buildings and the grid of the gameMap.
+ * Stores all the buildings and the grid of the gameMap. Mainly
+ * used for adding building to the map and pathfinding between buildings.
  * @author Thomas Nash
  */
 public class GameMap {
