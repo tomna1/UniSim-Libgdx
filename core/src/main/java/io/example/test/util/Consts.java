@@ -1,4 +1,4 @@
-package io.example.test;
+package io.example.test.util;
 
 /**
  * This class is used to manage all the constants in the game. It allows

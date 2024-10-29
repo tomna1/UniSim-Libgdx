@@ -10,6 +10,10 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+
+import io.example.test.util.Assets;
+import io.example.test.util.Consts;
+
 import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.Vector2;

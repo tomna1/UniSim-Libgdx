@@ -1,10 +1,10 @@
-package io.example.test;
+package io.example.test.building;
 
 
 /**
  * A component that can be added to the building class. It stores the studentIDs
  * of students who have entered this building. It is manipulated by the
- * {@link io.example.test.EnteringSystem}.
+ * {@link io.example.test.building.EnteringSystem}.
  * @author Thomas Nash
  */
 public class EnterableComponent {

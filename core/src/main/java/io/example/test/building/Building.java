@@ -1,7 +1,12 @@
-package io.example.test;
+package io.example.test.building;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import io.example.test.student.StudentActivity;
+import io.example.test.util.Assets;
+import io.example.test.util.Consts;
+import io.example.test.util.Vector2i;
 
 /**
  * A class which represents a building that can be placed on the map. The building

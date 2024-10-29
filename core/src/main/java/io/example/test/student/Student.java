@@ -1,4 +1,4 @@
-package io.example.test;
+package io.example.test.student;
 
 import java.util.ArrayList;
 
@@ -7,6 +7,12 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.example.test.GameManager.Colours;
+import io.example.test.building.Building;
+import io.example.test.gamemap.GameMap;
+import io.example.test.util.Assets;
+import io.example.test.util.Consts;
+import io.example.test.util.Vector2f;
+import io.example.test.util.Vector2i;
 /* */
 public class Student {
     // The map the student uses for pathfinding.

@@ -1,4 +1,4 @@
-package io.example.test;
+package io.example.test.util;
 
 public class Vector2f {
     public float x;

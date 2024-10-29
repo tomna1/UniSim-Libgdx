@@ -1,6 +1,8 @@
-package io.example.test;
+package io.example.test.util;
 
 import com.badlogic.gdx.graphics.Texture;
+
+import io.example.test.Main;
 /**
  * This class is used to store all textures that will be used in the game.
  * All textures are made public static variable and should not be changed

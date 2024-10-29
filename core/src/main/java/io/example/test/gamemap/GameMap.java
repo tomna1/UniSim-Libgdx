@@ -1,4 +1,4 @@
-package io.example.test;
+package io.example.test.gamemap;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -7,8 +7,18 @@ import java.util.Map;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import io.example.test.Tile.TileType;
-import io.example.test.Building.BuildingType;
+import io.example.test.building.Building;
+import io.example.test.building.BuildingActivityComponent;
+import io.example.test.building.BuildingFactory;
+import io.example.test.building.EventSystem;
+import io.example.test.building.HousingSystem;
+import io.example.test.building.Building.BuildingType;
+import io.example.test.gamemap.Tile.TileType;
+import io.example.test.student.Student;
+import io.example.test.student.StudentActivity;
+import io.example.test.student.StudentManager;
+import io.example.test.util.Consts;
+import io.example.test.util.Vector2i;
 
 /**
  * Stores all the buildings and the grid of the gameMap.

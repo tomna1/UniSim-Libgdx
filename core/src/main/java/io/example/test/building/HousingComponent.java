@@ -1,4 +1,4 @@
-package io.example.test;
+package io.example.test.building;
 
 /**
  * A component that can be added to the {@link Building} class. It stores the studentIDs

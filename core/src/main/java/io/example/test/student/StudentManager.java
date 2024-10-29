@@ -1,9 +1,16 @@
-package io.example.test;
+package io.example.test.student;
 
 import java.util.HashMap;
 import java.util.Map;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+
+import io.example.test.GameManager;
+import io.example.test.building.Building;
+import io.example.test.gamemap.GameMap;
+import io.example.test.util.Consts;
+import io.example.test.util.UniqueIDGiver;
+
 import com.badlogic.gdx.Gdx;
 
 /**

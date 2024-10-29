@@ -1,6 +1,7 @@
-package io.example.test;
+package io.example.test.building;
 
 import java.util.ArrayList;
+
 import io.example.test.GameManager.Colours;
 
 /** A building Event is a building activity but with a time limit. Events are split

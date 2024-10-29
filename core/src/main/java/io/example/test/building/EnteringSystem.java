@@ -1,4 +1,4 @@
-package io.example.test;
+package io.example.test.building;
 
 /** 
  * This class is used to add and remove students from a building by manipulating

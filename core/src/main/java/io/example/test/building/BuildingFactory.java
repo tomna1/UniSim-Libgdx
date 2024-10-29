@@ -1,7 +1,10 @@
-package io.example.test;
+package io.example.test.building;
 
-import io.example.test.Building.BuildingType;
-import io.example.test.Student.Activity;
+import io.example.test.GameManager;
+import io.example.test.building.Building.BuildingType;
+import io.example.test.student.Student.Activity;
+import io.example.test.util.Consts;
+import io.example.test.util.Vector2i;
 
 
 /**

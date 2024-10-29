@@ -1,6 +1,10 @@
-package io.example.test;
+package io.example.test.building;
 
 import com.badlogic.gdx.Gdx;
+
+import io.example.test.student.StudentActivity;
+import io.example.test.student.StudentManager;
+import io.example.test.util.Consts;
 
 /** 
  * This system is used to manipulate the {@link BuildingEventComponent} of a building.

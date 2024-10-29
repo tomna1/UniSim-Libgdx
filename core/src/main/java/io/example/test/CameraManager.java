@@ -6,6 +6,8 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
+import io.example.test.util.Consts;
+
 // This class is used to control how the camera moves based on user inputs.
 public class CameraManager {
     private OrthographicCamera camera;

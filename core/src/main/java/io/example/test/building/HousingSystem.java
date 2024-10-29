@@ -1,4 +1,6 @@
-package io.example.test;
+package io.example.test.building;
+
+import io.example.test.student.StudentManager;
 
 /**
  * This system is used to affect the {@link HousingComponent} of a building.
