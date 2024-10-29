@@ -14,7 +14,10 @@ import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.Vector2;
 
-/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. */
+/** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. 
+ * This is the main file of the game.
+ * @author Thomas Nash
+*/
 public class Main extends Game {
     private SpriteBatch batch;
     ExtendViewport viewport;
@@ -30,7 +33,9 @@ public class Main extends Game {
 
     GameManager gameManager;
 
-    // Called once at the start of the game.
+    /**
+     * Called once at the start of the game.
+     */
     @Override
     public void create() {
         Assets.loadTextures();
@@ -69,13 +74,20 @@ public class Main extends Game {
         viewport.update(width, height, true);
     }
 
+    /**
+     * This method is called by libgdx each time the window for the game
+     * is clicked off of. For example, this method would be called if the game
+     * was minimised by the user.S
+     */
     @Override
     public void pause() {
     }
 
 
+    /**
+     * The main loop of the game.
+     */
     @Override
-    // The main loop of the game.
     public void render() {
         input();
         logic();

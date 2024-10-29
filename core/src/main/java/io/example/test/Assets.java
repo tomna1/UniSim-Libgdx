@@ -1,7 +1,12 @@
 package io.example.test;
 
 import com.badlogic.gdx.graphics.Texture;
-
+/**
+ * This class is used to store all textures that will be used in the game.
+ * All textures are made public static variable and should not be changed
+ * by another other class.
+ * @author Thomas Nash
+ */
 public class Assets {
     // Misc textures
     public static Texture couldNotLoad;
@@ -18,8 +23,11 @@ public class Assets {
 
     private Assets() {};
 
-    // Note that textured cannot be loaded before libgdx has called the create method in
-    // Main.java
+    /**
+     * This method loads all the textures that might be used.
+     * Note that this method should not be called before libgdx has called the
+     * {@link Main#create()} method. 
+     */
     public static void loadTextures() {
         couldNotLoad = new Texture("misc/couldnot_load.png");
         studentTexture = new Texture("misc/student.png");

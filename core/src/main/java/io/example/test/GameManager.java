@@ -9,7 +9,10 @@ import com.badlogic.gdx.math.Vector2;
 
 import io.example.test.Building.BuildingType;
 
-// Game manager holds all the logic of the game i guess idk.
+/**
+ * The game manager holds all information about the game.
+ * @author Thomas Nash
+ */
 public class GameManager {
     public enum Colours {
         GREEN,
@@ -49,17 +52,32 @@ public class GameManager {
         studentManager = new StudentManager();
     }
 
-    // This method should be called directly after the game manager is instantiated. 
-    // Can only be called once.
+    /**
+     * This methods generates a map with the specified width and height. This
+     * should be called after the game manager is instantiated. This method
+     * can only be called once.
+     * @param width Width of the map.
+     * @param height Height of the map.
+     */
     public void generateMap(int width, int height) {
         if (gameMap == null) gameMap = new GameMap(studentManager, width, height);
         studentManager.useMap(gameMap);
     }
 
+    /**
+     * Activates a new colour which allows that colour to be generated with the
+     * {@link #getRandomColour()} method.
+     * @param colour The colour to activate.
+     */
     public static void activateColour(Colours colour) {
         if (activatedColours.contains(colour)) return;
         activatedColours.add(colour);
     }
+    /**
+     * Checks if a colour has already been activated.
+     * @param colour The colour to check.
+     * @return true if the colour has been activated and false if not.
+     */
     public static boolean isColourActivated(Colours colour) {
         if (activatedColours.contains(colour)) return true;
         return false;
@@ -68,11 +86,22 @@ public class GameManager {
         return Colours.RED;
     }
 
-
+    /**
+     * Adds the specified amount of money to the player. Does this by doing
+     * _money += money.
+     * @param money The amount of money to add. Should be positive.
+     * @return The new total amount of money.
+     */
     public static int addMoney(int money) {
         _money += money;
         return _money;
     }
+    /**
+     * Removes the specified amount of money from the player. Does thi by doing
+     * _money -= money.
+     * @param money The amount of money to remove. Should be positive.
+     * @return The new total amount of money.
+     */
     public static int removeMoney(int money) {
         _money -= money;
         return _money;
@@ -82,7 +111,11 @@ public class GameManager {
         return false;
     }
 
-    // ALL INPUT STUFF GOES HERE
+    /**
+     * All input related stuff goes into this method.
+     * @param touchPos The point of the grid that is being touched. (World)
+     * coords not screen coords).
+     */
     public void processInput(Vector2 touchPos) {
         // touch pos should be the world coordinates, not screen coordinates. 
         
@@ -116,13 +149,19 @@ public class GameManager {
         }
     }
 
-    
+    /**
+     * Calls {@link StudentManager#update(float)} and {@link GameMap#update(float)}.
+     * @param deltaTime The time since the last frame.
+     */
     public void update(float deltaTime) {
         studentManager.update(deltaTime);
         gameMap.update(deltaTime);
     }
 
-
+    /**
+     * Draws the game map and the students onto the screen.
+     * @param batch
+     */
     public void draw(SpriteBatch batch) {
         gameMap.draw(batch);
         studentManager.drawStudents(batch);
