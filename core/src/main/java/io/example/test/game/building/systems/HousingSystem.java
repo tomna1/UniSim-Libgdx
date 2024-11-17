@@ -1,8 +1,8 @@
-package io.example.test.building.systems;
+package io.example.test.game.building.systems;
 
-import io.example.test.building.Building;
-import io.example.test.building.components.HousingComponent;
-import io.example.test.student.StudentManager;
+import io.example.test.game.building.Building;
+import io.example.test.game.building.components.HousingComponent;
+import io.example.test.game.student.StudentManager;
 
 /**
  * This system is used to manipulate the {@link HousingComponent} of a building.

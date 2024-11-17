@@ -1,7 +1,7 @@
-package io.example.test.building.components;
+package io.example.test.game.building.components;
 
-import io.example.test.building.Building;
-import io.example.test.building.systems.HousingSystem;
+import io.example.test.game.building.Building;
+import io.example.test.game.building.systems.HousingSystem;
 
 /**
  * A component that can be added to the {@link Building} class. It stores the studentIDs

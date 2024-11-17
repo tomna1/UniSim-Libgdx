@@ -1,17 +1,17 @@
-package io.example.test.building;
+package io.example.test.game.building;
 
-import io.example.test.GameManager;
-import io.example.test.building.Building.BuildingType;
-import io.example.test.building.components.BuildingActivityComponent;
-import io.example.test.building.components.BuildingEventComponent;
-import io.example.test.building.components.EnterableComponent;
-import io.example.test.building.components.HousingComponent;
-import io.example.test.building.components.MapObjectComponent;
-import io.example.test.building.components.RenderComponent;
-import io.example.test.student.Student.Activity;
-import io.example.test.util.Assets;
-import io.example.test.util.Consts;
-import io.example.test.util.Vector2i;
+import io.example.test.game.GameManager;
+import io.example.test.game.building.Building.BuildingType;
+import io.example.test.game.building.components.BuildingActivityComponent;
+import io.example.test.game.building.components.BuildingEventComponent;
+import io.example.test.game.building.components.EnterableComponent;
+import io.example.test.game.building.components.HousingComponent;
+import io.example.test.game.building.components.MapObjectComponent;
+import io.example.test.game.building.components.RenderComponent;
+import io.example.test.game.student.Student.Activity;
+import io.example.test.game.util.Assets;
+import io.example.test.game.util.Consts;
+import io.example.test.game.util.Vector2i;
 
 
 /**

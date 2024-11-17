@@ -1,9 +1,9 @@
-package io.example.test.building.components;
+package io.example.test.game.building.components;
 
 import java.util.ArrayList;
 
-import io.example.test.GameManager.Colours;
-import io.example.test.building.systems.EventSystem;
+import io.example.test.game.GameManager.Colours;
+import io.example.test.game.building.systems.EventSystem;
 
 /** A building Event is a building activity but with a time limit. Events are split
  * into 3 time phases. The {@link #timeToStart} which indicates how long until the event starts.

@@ -1,13 +1,13 @@
-package io.example.test.gamemap;
+package io.example.test.game.gamemap;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import io.example.test.building.Building;
-import io.example.test.gamemap.Tile.TileType;
-import io.example.test.util.Assets;
-import io.example.test.util.Consts;
-import io.example.test.util.Vector2i;
+import io.example.test.game.building.Building;
+import io.example.test.game.gamemap.Tile.TileType;
+import io.example.test.game.util.Assets;
+import io.example.test.game.util.Consts;
+import io.example.test.game.util.Vector2i;
 
 import java.util.Queue;
 import java.util.ArrayList;

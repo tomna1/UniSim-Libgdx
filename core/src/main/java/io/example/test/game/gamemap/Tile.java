@@ -1,4 +1,4 @@
-package io.example.test.gamemap;
+package io.example.test.game.gamemap;
 
 /**
  * Each tile is a 1x1 block on the grid.

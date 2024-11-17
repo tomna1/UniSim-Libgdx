@@ -5,8 +5,9 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
-import io.example.test.util.Assets;
-import io.example.test.util.Consts;
+import io.example.test.game.GameScreen;
+import io.example.test.game.util.Assets;
+import io.example.test.game.util.Consts;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. 
  * This is the main file of the game where the game loop takes place.

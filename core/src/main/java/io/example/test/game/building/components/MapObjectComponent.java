@@ -1,6 +1,6 @@
-package io.example.test.building.components;
+package io.example.test.game.building.components;
 
-import io.example.test.util.Vector2i;
+import io.example.test.game.util.Vector2i;
 
 /**
  * This component can be added to buildings to give them a position and a

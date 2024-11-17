@@ -1,4 +1,4 @@
-package io.example.test.student;
+package io.example.test.game.student;
 
 import java.util.ArrayList;
 
@@ -6,13 +6,13 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import io.example.test.GameManager.Colours;
-import io.example.test.building.Building;
-import io.example.test.gamemap.GameMap;
-import io.example.test.util.Assets;
-import io.example.test.util.Consts;
-import io.example.test.util.Vector2f;
-import io.example.test.util.Vector2i;
+import io.example.test.game.GameManager.Colours;
+import io.example.test.game.building.Building;
+import io.example.test.game.gamemap.GameMap;
+import io.example.test.game.util.Assets;
+import io.example.test.game.util.Consts;
+import io.example.test.game.util.Vector2f;
+import io.example.test.game.util.Vector2i;
 /**
  * This class represents a student at university. It is able to be move around
  * the university and complete tasks based on the buildings at placed on the

@@ -1,11 +1,11 @@
-package io.example.test.student;
+package io.example.test.game.student;
 
-import io.example.test.building.Building;
-import io.example.test.building.components.BuildingActivityComponent;
-import io.example.test.building.components.BuildingEventComponent;
-import io.example.test.building.components.EnterableComponent;
-import io.example.test.building.systems.EnteringSystem;
-import io.example.test.util.Vector2i;
+import io.example.test.game.building.Building;
+import io.example.test.game.building.components.BuildingActivityComponent;
+import io.example.test.game.building.components.BuildingEventComponent;
+import io.example.test.game.building.components.EnterableComponent;
+import io.example.test.game.building.systems.EnteringSystem;
+import io.example.test.game.util.Vector2i;
 
 /**
  * This class contains information about an activity offered by a building.

@@ -1,4 +1,4 @@
-package io.example.test.building.components;
+package io.example.test.game.building.components;
 
 import com.badlogic.gdx.graphics.Texture;
 

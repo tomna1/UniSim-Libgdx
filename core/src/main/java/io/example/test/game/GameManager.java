@@ -1,4 +1,4 @@
-package io.example.test;
+package io.example.test.game;
 
 import java.util.ArrayList;
 
@@ -7,11 +7,11 @@ import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 
-import io.example.test.building.Building.BuildingType;
-import io.example.test.gamemap.GameMap;
-import io.example.test.student.StudentManager;
-import io.example.test.util.Consts;
-import io.example.test.util.Vector2i;
+import io.example.test.game.building.Building.BuildingType;
+import io.example.test.game.gamemap.GameMap;
+import io.example.test.game.student.StudentManager;
+import io.example.test.game.util.Consts;
+import io.example.test.game.util.Vector2i;
 
 /**
  * The game manager holds all information about the game.

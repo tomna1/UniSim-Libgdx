@@ -1,4 +1,4 @@
-package io.example.test;
+package io.example.test.game;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -6,7 +6,7 @@ import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 
-import io.example.test.util.Consts;
+import io.example.test.game.util.Consts;
 
 // This class is used to control how the camera moves based on user inputs.
 public class CameraManager {

@@ -1,12 +1,12 @@
-package io.example.test.building.systems;
+package io.example.test.game.building.systems;
 
 import com.badlogic.gdx.Gdx;
 
-import io.example.test.building.Building;
-import io.example.test.building.components.BuildingEventComponent;
-import io.example.test.student.StudentActivity;
-import io.example.test.student.StudentManager;
-import io.example.test.util.Consts;
+import io.example.test.game.building.Building;
+import io.example.test.game.building.components.BuildingEventComponent;
+import io.example.test.game.student.StudentActivity;
+import io.example.test.game.student.StudentManager;
+import io.example.test.game.util.Consts;
 
 /** 
  * This system is used to manipulate the {@link BuildingEventComponent} of a building.

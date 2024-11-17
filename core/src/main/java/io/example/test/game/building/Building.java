@@ -1,15 +1,15 @@
-package io.example.test.building;
+package io.example.test.game.building;
 
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
-import io.example.test.building.components.BuildingActivityComponent;
-import io.example.test.building.components.BuildingEventComponent;
-import io.example.test.building.components.EnterableComponent;
-import io.example.test.building.components.HousingComponent;
-import io.example.test.building.components.MapObjectComponent;
-import io.example.test.building.components.RenderComponent;
-import io.example.test.student.StudentActivity;
-import io.example.test.util.Assets;
+import io.example.test.game.building.components.BuildingActivityComponent;
+import io.example.test.game.building.components.BuildingEventComponent;
+import io.example.test.game.building.components.EnterableComponent;
+import io.example.test.game.building.components.HousingComponent;
+import io.example.test.game.building.components.MapObjectComponent;
+import io.example.test.game.building.components.RenderComponent;
+import io.example.test.game.student.StudentActivity;
+import io.example.test.game.util.Assets;
 
 /**
  * A class which represents a building that can be placed on the map. The building

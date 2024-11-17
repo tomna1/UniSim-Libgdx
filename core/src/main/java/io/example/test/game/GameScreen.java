@@ -1,4 +1,4 @@
-package io.example.test;
+package io.example.test.game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.Color;
@@ -7,7 +7,8 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
-import io.example.test.util.Consts;
+import io.example.test.Main;
+import io.example.test.game.util.Consts;
 
 public class GameScreen implements Screen {
     private Main main;
