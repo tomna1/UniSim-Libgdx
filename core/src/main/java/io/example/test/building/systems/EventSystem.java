@@ -1,7 +1,9 @@
-package io.example.test.building;
+package io.example.test.building.systems;
 
 import com.badlogic.gdx.Gdx;
 
+import io.example.test.building.Building;
+import io.example.test.building.components.BuildingEventComponent;
 import io.example.test.student.StudentActivity;
 import io.example.test.student.StudentManager;
 import io.example.test.util.Consts;

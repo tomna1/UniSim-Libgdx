@@ -1,12 +1,15 @@
 package io.example.test.building;
 
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
+import io.example.test.building.components.BuildingActivityComponent;
+import io.example.test.building.components.BuildingEventComponent;
+import io.example.test.building.components.EnterableComponent;
+import io.example.test.building.components.HousingComponent;
+import io.example.test.building.components.MapObjectComponent;
+import io.example.test.building.components.RenderComponent;
 import io.example.test.student.StudentActivity;
 import io.example.test.util.Assets;
-import io.example.test.util.Consts;
-import io.example.test.util.Vector2i;
 
 /**
  * A class which represents a building that can be placed on the map. The building
@@ -21,19 +24,16 @@ public class Building {
         Accommodation,
         Restaurant,
     }
-    
-    /**
-     * The position of the building. Also works as an ID since no 2 buildings
-     * can have the same position.
-     */
-    public Vector2i pos;
 
-    // Used for drawing and pathfinding.
+    // Only used for printing out the type of the building that may have been deleted.
+    // Does not actually affect the functionality of the building.
     private BuildingType type;
 
-    // used for drawing the accommodation. Texture depends on the type 
-    // of the building and the level of the building.
-    private Texture texture;
+    // Used to give a position, width and height.
+    public MapObjectComponent mapObjectComponent;
+
+    // Used to draw the building onto the screen. NECESSARY COMPONENT.
+    private RenderComponent renderComponent;
 
     // Housing component is added to buildings that students can make their home
     // such as accommodation. OPTIONAL COMPONENT
@@ -56,40 +56,35 @@ public class Building {
      * @param pos Position of the building.
      * @param type Type of the building.
      */
-    public Building(Vector2i pos, BuildingType type) {
-        this.pos = pos;
+    public Building(
+        BuildingType type,
+        MapObjectComponent mapObjectComponent,
+        RenderComponent renderComponent,
+        EnterableComponent enterableComponent,
+        BuildingActivityComponent activityComponent
+    ) {
         this.type = type;
-        if (type == BuildingType.Accommodation) {
-            texture = Assets.accommodationTextureL1;
-        } else if (type == BuildingType.LectureTheatre) {
-            texture = Assets.lectureTheatreTextureL1;
-        } else if (type == BuildingType.Restaurant) {
-            texture = Assets.restaurantTextureL1;
-        } else texture = Assets.couldNotLoad;
+        this.mapObjectComponent = mapObjectComponent;
+        this.renderComponent = renderComponent;
+        this.enterableComponent = enterableComponent;
+        this.activityComponent = activityComponent;
     }
 
     /**
-     * @return The type of the building.
-     */
-    public BuildingType getType() { return type; }  
-
-    /**
-     * @return The width of the building based on its type.
+     * Gets the width of the building based on its {@link MapObjectComponent}.
+     * @return Width. Might return 0 if no width is found.
      */
     public int getWidth() {
-        if (type == BuildingType.Accommodation) { return Consts.ACCOMMODATION_WIDTH; }
-        else if (type == BuildingType.LectureTheatre) { return Consts.LECTURE_THEATRE_WIDTH; }
-        else if (type == BuildingType.Restaurant) { return Consts.RESTAURANT_WIDTH; }
-        else { return 1; }
+        if (mapObjectComponent == null) return 0;
+        return mapObjectComponent.width;
     }
     /**
-     * @return The height of the building based on its type.
+     * Gets the height of the building based on its {@link MapObjectComponent}.
+     * @return Might return 0 if no height is found.
      */
     public int getHeight() {
-        if (type == BuildingType.Accommodation) { return Consts.ACCOMMODATION_HEIGHT; }
-        else if (type == BuildingType.LectureTheatre) { return Consts.LECTURE_THEATRE_HEIGHT; }
-        else if (type == BuildingType.Restaurant) { return Consts.RESTAURANT_HEIGHT; }
-        else { return 1; }
+        if (mapObjectComponent == null) return 0;
+        return mapObjectComponent.height;
     }
 
     /**
@@ -105,24 +100,33 @@ public class Building {
 
 
     /**
-     * Draws the building onto the screen.
+     * Draws the building onto the screen based on its internal
+     * {@link RenderComponent}.
      * @param batch
      */
     public void draw(SpriteBatch batch) {
-        if (texture != null) {
-            batch.draw(texture, pos.x, pos.y, getWidth(), getHeight());
+        if (mapObjectComponent == null) return;
+        if (renderComponent == null) return;
+        if (renderComponent.texture == null) {
+            batch.draw(
+                Assets.couldNotLoad, mapObjectComponent.pos.x, mapObjectComponent.pos.y,
+                mapObjectComponent.width, mapObjectComponent.height
+            );
         }
         else {
-            batch.draw(Assets.couldNotLoad, pos.x, pos.y, getWidth(), getHeight());
+            batch.draw(
+                renderComponent.texture, mapObjectComponent.pos.x, mapObjectComponent.pos.y,
+                mapObjectComponent.width, mapObjectComponent.height
+            ); 
         }
     }
 
 
     @Override
     public String toString() {
-        if (type == BuildingType.Accommodation) return "Accommodation" + pos.toString();
-        else if (type == BuildingType.LectureTheatre) return "Lecture Theatre" + pos.toString();
-        else if (type == BuildingType.Restaurant) return "Restaurant" + pos.toString();
-        else return "Building" + pos.toString();
+        if (type == BuildingType.Accommodation) return "Accommodation" + mapObjectComponent.pos.toString();
+        else if (type == BuildingType.LectureTheatre) return "Lecture Theatre" + mapObjectComponent.pos.toString();
+        else if (type == BuildingType.Restaurant) return "Restaurant" + mapObjectComponent.pos.toString();
+        else return "Building" + mapObjectComponent.pos.toString();
     }
 }

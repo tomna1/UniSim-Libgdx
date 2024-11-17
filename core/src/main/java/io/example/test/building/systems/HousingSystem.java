@@ -1,5 +1,7 @@
-package io.example.test.building;
+package io.example.test.building.systems;
 
+import io.example.test.building.Building;
+import io.example.test.building.components.HousingComponent;
 import io.example.test.student.StudentManager;
 
 /**

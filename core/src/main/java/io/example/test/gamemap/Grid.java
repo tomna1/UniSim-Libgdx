@@ -82,11 +82,11 @@ public class Grid {
      * @return true if it can fit and false otherwise.
      */
     private boolean canBuildingFitInGrid(Building building) {
-        if (building.pos.x < 0 || building.pos.y < 0) return false;
+        if (building.mapObjectComponent.pos.x < 0 || building.mapObjectComponent.pos.y < 0) return false;
         
         if (
-            building.pos.x + building.getWidth() > width ||
-            building.pos.y + building.getHeight() > height
+            building.mapObjectComponent.pos.x + building.getWidth() > width ||
+            building.mapObjectComponent.pos.y + building.getHeight() > height
         ) return false;
 
         return true;
@@ -99,8 +99,8 @@ public class Grid {
      */
     public boolean canAddBuilding(Building building) {
         if (canBuildingFitInGrid(building) == false) return false;
-        int posX = building.pos.x;
-        int posY = building.pos.y;
+        int posX = building.mapObjectComponent.pos.x;
+        int posY = building.mapObjectComponent.pos.y;
         int width = building.getWidth();
         int height = building.getHeight();
         // Checks all tiles that the building work take up are empty.
@@ -175,8 +175,8 @@ public class Grid {
     public boolean addBuilding(Building building) {
         if (canAddBuilding(building) == false) return false;
 
-        int posX = building.pos.x;
-        int posY = building.pos.y;
+        int posX = building.mapObjectComponent.pos.x;
+        int posY = building.mapObjectComponent.pos.y;
         int width = building.getWidth();
         int height = building.getHeight();
         // Adds the building
@@ -207,8 +207,8 @@ public class Grid {
      * @return true is successfully removed and false otherwise.
      */
     public boolean removeBuilding(Building building) {
-        int posX = building.pos.x;
-        int posY = building.pos.y;
+        int posX = building.mapObjectComponent.pos.x;
+        int posY = building.mapObjectComponent.pos.y;
 
         if (tiles[posY][posX].getTileType() != TileType.BuildingBL) return false;
 

@@ -8,11 +8,11 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 
 import io.example.test.building.Building;
-import io.example.test.building.BuildingActivityComponent;
 import io.example.test.building.BuildingFactory;
-import io.example.test.building.EventSystem;
-import io.example.test.building.HousingSystem;
 import io.example.test.building.Building.BuildingType;
+import io.example.test.building.components.BuildingActivityComponent;
+import io.example.test.building.systems.EventSystem;
+import io.example.test.building.systems.HousingSystem;
 import io.example.test.gamemap.Tile.TileType;
 import io.example.test.student.Student;
 import io.example.test.student.StudentActivity;
@@ -53,7 +53,7 @@ public class GameMap {
     public boolean isBuildingAtPoint(int posX, int posY) { return grid.isBuildingAtPoint(new Vector2i(posX, posY)); }
     public boolean posWithinMap(int posX, int posY) { return grid.posWithinGrid(new Vector2i(posX, posY)); }
     public ArrayList<Vector2i> findPath(Vector2i start, Vector2i end) { return grid.findPath(start, end); }
-    public ArrayList<Vector2i> findPath(Vector2i start, Building end) { return grid.findPath(start, end.pos); }
+    public ArrayList<Vector2i> findPath(Vector2i start, Building end) { return grid.findPath(start, end.mapObjectComponent.pos); }
     
     /**
      * Attempts to adds a single path at the point.
@@ -119,28 +119,17 @@ public class GameMap {
      */
     public boolean addBuilding(BuildingType type, int posX, int posY) {
         Vector2i pos = new Vector2i(posX, posY);
-        
-        if (type == BuildingType.Accommodation) {
-            Building building = buildingFactory.createBuilding(BuildingType.Accommodation, pos);
-            if (grid.addBuilding(building) == false) return false;
-            buildings.put(pos, building);
+
+        Building building = buildingFactory.createBuilding(type, pos);
+        if (grid.addBuilding(building) == false) return false;
+        buildings.put(pos, building);
+        if (building.housingComponent != null) {
             housingSystem.fillHome(building);
-            if (Consts.BUILDING_PLACEMENT_DEBUG_MODE_ON) {
-                Gdx.app.log("GameMap", "Adding " + building.getType() + " at " + pos.toString());
-            }
-            return true;
         }
-        else if (type == BuildingType.LectureTheatre) {
-            Building building = buildingFactory.createBuilding(BuildingType.LectureTheatre, pos);
-            if (grid.addBuilding(building) == false) return false;
-            buildings.put(pos, building);
-            if (Consts.BUILDING_PLACEMENT_DEBUG_MODE_ON) {
-                Gdx.app.log("GameMap", "Adding " + building.getType() + " at " + pos.toString());
-            }
-            return true;
+        if (Consts.BUILDING_PLACEMENT_DEBUG_MODE_ON) {
+            Gdx.app.log("GameMap", "Adding "+building+" to the map");
         }
-        
-        return false;
+        return true;
     }
 
     /**
@@ -177,7 +166,7 @@ public class GameMap {
             grid.removeBuilding(building);
             buildings.remove(pos);
             if (Consts.BUILDING_PLACEMENT_DEBUG_MODE_ON) {
-                Gdx.app.log("GameMap", "Removing " + building.getType() + " at " + pos.toString());
+                Gdx.app.log("GameMap", "Removing "+building+" from the map");
             }
             return true;
         }
@@ -221,7 +210,7 @@ public class GameMap {
             b.activityComponent.isWalkIn == true && 
             b.enterableComponent.isFull() == false
             ) {
-                currPath = findPath(pos, b.pos);
+                currPath = findPath(pos, b.mapObjectComponent.pos);
                 if (currPath == null) continue;
                 currDistance = currPath.size();
                 if (currDistance < distance) {

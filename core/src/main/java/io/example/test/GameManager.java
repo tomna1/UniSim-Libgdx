@@ -124,7 +124,7 @@ public class GameManager {
         // touch pos should be the world coordinates, not screen coordinates. 
         
         // use 1 to select accommodation and 2 to select path, 3 to select lecture
-        // theatre.
+        // theatre and 4 to select restaurant.
         if (Gdx.input.isKeyPressed(Input.Keys.NUM_1)) {
             isPathSelected = false;
             selectedBuilding = BuildingType.Accommodation;
@@ -134,7 +134,8 @@ public class GameManager {
             isPathSelected = false;
             selectedBuilding = BuildingType.LectureTheatre;
         } else if (Gdx.input.isKeyPressed(Input.Keys.NUM_4)) {
-            
+            isPathSelected = false;
+            selectedBuilding = BuildingType.Restaurant;
         }
         
         // If left click, add the selected buildable.

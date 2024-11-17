@@ -1,10 +1,10 @@
 package io.example.test.student;
 
 import io.example.test.building.Building;
-import io.example.test.building.BuildingActivityComponent;
-import io.example.test.building.BuildingEventComponent;
-import io.example.test.building.EnterableComponent;
-import io.example.test.building.EnteringSystem;
+import io.example.test.building.components.BuildingActivityComponent;
+import io.example.test.building.components.BuildingEventComponent;
+import io.example.test.building.components.EnterableComponent;
+import io.example.test.building.systems.EnteringSystem;
 import io.example.test.util.Vector2i;
 
 /**
@@ -46,7 +46,7 @@ public class StudentActivity {
     // standard getters.
 
     public int getActivityCapacity() { return building.enterableComponent.getCapacity(); }
-    public Vector2i getPos() { return new Vector2i(building.pos); }
+    public Vector2i getPos() { return new Vector2i(building.mapObjectComponent.pos); }
     public Student.Activity getType() { return activity; }
 
     /**

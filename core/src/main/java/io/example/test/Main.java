@@ -1,7 +1,6 @@
 package io.example.test;
 
 import com.badlogic.gdx.Application;
-import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
@@ -26,9 +25,6 @@ public class Main extends Game {
     private SpriteBatch batch;
     ExtendViewport viewport;
     CameraManager camManager;
-
-    Sound dropSound;
-    Music music;
 
     // world coords of mouse pos this frame
     Vector2 worldMousePos;
@@ -55,10 +51,6 @@ public class Main extends Game {
         // manager
         gameManager = new GameManager();
         gameManager.generateMap(Consts.GRID_WIDTH, Consts.GRID_HEIGHT);
-
-        // sound
-        dropSound = Gdx.audio.newSound(Gdx.files.internal("drop.mp3"));
-        music = Gdx.audio.newMusic(Gdx.files.internal("music.mp3"));
 
         // Logging
         if (Consts.DEBUG_MODE_ON) {

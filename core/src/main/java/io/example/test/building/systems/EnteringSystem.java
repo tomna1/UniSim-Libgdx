@@ -1,4 +1,6 @@
-package io.example.test.building;
+package io.example.test.building.systems;
+
+import io.example.test.building.components.EnterableComponent;
 
 /** 
  * This class is used to add and remove students from a building by manipulating

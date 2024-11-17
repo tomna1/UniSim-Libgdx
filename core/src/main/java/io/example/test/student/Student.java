@@ -82,7 +82,7 @@ public class Student {
         this.ID = ID;
         this.name = name;
         this.colour = colour;
-        pos = new Vector2f(home.pos.x, home.pos.y);
+        pos = new Vector2f(home.mapObjectComponent.pos.x, home.mapObjectComponent.pos.y);
         this.home = home;
         sprite = new Sprite(Assets.studentTexture);
         sprite.setSize(1, 1);
@@ -92,7 +92,7 @@ public class Student {
     // standard getters.
 
     public int getId() { return ID; }
-    public Vector2i getHomePos() { return home.pos; }
+    public Vector2i getHomePos() { return new Vector2i(home.mapObjectComponent.pos); }
     public float getPosX() { return pos.x; }
     public float getPosY() { return pos.y; }
     public String getName() { return name; }

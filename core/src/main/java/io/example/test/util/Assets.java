@@ -17,7 +17,7 @@ public class Assets {
     // Building textures used by gamemap.
     public static Texture accommodationTextureL1;
     public static Texture lectureTheatreTextureL1;
-    public static Texture restaurantTextureL1;
+    public static Texture foodHallTextureL1;
 
     // Tile textures used by grid.
     public static Texture grassTile;
@@ -31,14 +31,14 @@ public class Assets {
      * {@link Main#create()} method. 
      */
     public static void loadTextures() {
-        couldNotLoad = new Texture("misc/couldnot_load.png");
-        studentTexture = new Texture("misc/student.png");
-        
-        accommodationTextureL1 = new Texture("buildings/house.jpg");
-        lectureTheatreTextureL1 = new Texture("buildings/lecture_theatre.png");
-        restaurantTextureL1 = new Texture("misc/couldnot_load.png");
+        couldNotLoad =              new Texture("textures/misc/could_not_load.png");
+        studentTexture =            new Texture("textures/misc/student.png");
+       
+        accommodationTextureL1 =    new Texture("textures/buildings/accommodation.png");
+        lectureTheatreTextureL1 =   new Texture("textures/buildings/lecture_theatre.png");
+        foodHallTextureL1 =         new Texture("textures/buildings/food_hall.png");
 
-        grassTile = new Texture("tiles/grass.png");
-        pathTile = new Texture("tiles/path.jpg"); 
+        grassTile =                 new Texture("textures/tiles/grass.png");
+        pathTile =                  new Texture("textures/tiles/path.jpg"); 
     }
 }

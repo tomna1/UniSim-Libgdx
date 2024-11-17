@@ -1,4 +1,4 @@
-package io.example.test.building;
+package io.example.test.building.components;
 
 import io.example.test.student.Student;
 
@@ -6,7 +6,7 @@ import io.example.test.student.Student;
  * This component can be added to a building to specify what activity can
  * be completed at this building. 
  * @author Thomas Nash
- * @see io.example.test.building.BuildingEventComponent
+ * @see io.example.test.building.components.BuildingEventComponent
  * @see io.example.test.student.StudentActivity
  */
 public class BuildingActivityComponent {
