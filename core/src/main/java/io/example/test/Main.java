@@ -17,9 +17,7 @@ public class Main extends Game {
     private ExtendViewport viewport;
 
     private StartScreen startScreen;
-
     private GameScreen gameScreen;
-
     private EndScreen endScreen;
 
     public ExtendViewport getViewport() { return viewport; }
@@ -42,7 +40,7 @@ public class Main extends Game {
 
         startScreen = new StartScreen(this);
         gameScreen = new GameScreen(this);
-        this.setScreen(gameScreen);
+        this.setScreen(startScreen);
     }
 
     @Override
@@ -50,10 +48,15 @@ public class Main extends Game {
         viewport.update(width, height, true);
     }
 
+    @Override
+    public void render() {
+        super.render();
+    }
+
     /**
      * This method is called by libgdx each time the window for the game
      * is clicked off of. For example, this method would be called if the game
-     * was minimised by the user.S
+     * was minimised by the user.
      */
     @Override
     public void pause() {

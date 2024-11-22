@@ -23,6 +23,10 @@ public class Assets {
     public static Texture grassTile;
     public static Texture pathTile;
 
+    // Button textures
+    public static Texture startButtonUp;
+    public static Texture startButtonDown;
+
     private Assets() {};
 
     /**
@@ -40,5 +44,8 @@ public class Assets {
 
         grassTile =                 new Texture("textures/tiles/grass.png");
         pathTile =                  new Texture("textures/tiles/path.jpg"); 
+
+        startButtonUp =             new Texture("textures/buttons/start_up.png");
+        startButtonDown =           new Texture("textures/buttons/start_down.png");
     }
 }
