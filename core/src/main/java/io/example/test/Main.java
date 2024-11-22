@@ -73,7 +73,7 @@ public class Main extends Game {
     }
 
     public void endGame() {
-        endScreen = new EndScreen(this);
+        endScreen = new EndScreen(this, 0);
         this.setScreen(endScreen);
         gameScreen.dispose();
     }
