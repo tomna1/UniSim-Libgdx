@@ -3,35 +3,24 @@ package io.example.test;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
-import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
 
-import io.example.test.util.Assets;
-import io.example.test.util.Consts;
-
-import com.badlogic.gdx.audio.Sound;
-import com.badlogic.gdx.audio.Music;
-import com.badlogic.gdx.math.Vector2;
+import io.example.test.game.GameScreen;
+import io.example.test.game.util.Assets;
+import io.example.test.game.util.Consts;
 
 /** {@link com.badlogic.gdx.ApplicationListener} implementation shared by all platforms. 
  * This is the main file of the game where the game loop takes place.
  * @author Thomas Nash
 */
 public class Main extends Game {
-    private SpriteBatch batch;
-    ExtendViewport viewport;
-    CameraManager camManager;
+    private ExtendViewport viewport;
 
-    // world coords of mouse pos this frame
-    Vector2 worldMousePos;
-    // screen pos of mouse this frame.
-    Vector2 screenMousePos;
+    private StartScreen startScreen;
+    private GameScreen gameScreen;
+    private EndScreen endScreen;
 
-    GameManager gameManager;
+    public ExtendViewport getViewport() { return viewport; }
 
     /**
      * Called once at the start of the game.
@@ -39,18 +28,8 @@ public class Main extends Game {
     @Override
     public void create() {
         Assets.loadTextures();
-        batch = new SpriteBatch();
         // TODO: Fix the viewport
         viewport = new ExtendViewport(Consts.GRID_WIDTH, Consts.GRID_HEIGHT);
-        camManager = new CameraManager(viewport.getCamera());
-
-        // used for input.
-        worldMousePos = new Vector2();
-        screenMousePos = new Vector2();
-
-        // manager
-        gameManager = new GameManager();
-        gameManager.generateMap(Consts.GRID_WIDTH, Consts.GRID_HEIGHT);
 
         // Logging
         if (Consts.DEBUG_MODE_ON) {
@@ -58,11 +37,10 @@ public class Main extends Game {
         } else {
             Gdx.app.setLogLevel(Application.LOG_NONE);
         }
-    }
 
-    @Override
-    public void dispose() {
-        batch.dispose();
+        startScreen = new StartScreen(this);
+        gameScreen = new GameScreen(this);
+        this.setScreen(startScreen);
     }
 
     @Override
@@ -70,60 +48,33 @@ public class Main extends Game {
         viewport.update(width, height, true);
     }
 
+    @Override
+    public void render() {
+        super.render();
+    }
+
     /**
      * This method is called by libgdx each time the window for the game
      * is clicked off of. For example, this method would be called if the game
-     * was minimised by the user.S
+     * was minimised by the user.
      */
     @Override
     public void pause() {
     }
 
-
-    /**
-     * The main loop of the game.
-     */
     @Override
-    public void render() {
-        input();
-        logic();
-        draw();
+    public void dispose() {
     }
 
-    /**
-     * All input stuff goes into this method.
-     */
-    private void input() {
-        screenMousePos.set(Gdx.input.getX(), Gdx.input.getY());
-        worldMousePos.set(screenMousePos);
-        // converts screen coords to world coords.
-        viewport.unproject(worldMousePos);
-
-        camManager.processCameraInput();
-        gameManager.processInput(worldMousePos);
+    public void startGame() {
+        gameScreen = new GameScreen(this);
+        this.setScreen(gameScreen);
+        startScreen.dispose();
     }
 
-    /**
-     * All logic should happen in this method.
-     */
-    private void logic() {
-        float delta = Gdx.graphics.getDeltaTime();
-        gameManager.update(delta);
-    }
-
-    /**
-     * All drawing should take place in this method.
-     */
-    private void draw() {
-        // Clears the screen to red.
-        ScreenUtils.clear(Color.RED);
-        viewport.apply();
-        // updates the camera view.
-        batch.setProjectionMatrix(viewport.getCamera().combined);
-
-        // all drawing should take place between begin and end.
-        batch.begin();
-        gameManager.draw(batch);
-        batch.end();
+    public void endGame() {
+        endScreen = new EndScreen(this, 0);
+        this.setScreen(endScreen);
+        gameScreen.dispose();
     }
 }
