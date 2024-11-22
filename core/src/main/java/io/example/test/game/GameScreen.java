@@ -5,14 +5,14 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import io.example.test.Main;
 import io.example.test.game.util.Consts;
 
 public class GameScreen implements Screen {
     private Main main;
-    private ExtendViewport viewport;
+    private StretchViewport viewport;
 
     private SpriteBatch batch;
 

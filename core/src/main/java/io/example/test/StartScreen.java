@@ -10,14 +10,14 @@ import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.Drawable;
 import com.badlogic.gdx.scenes.scene2d.utils.TextureRegionDrawable;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import io.example.test.game.util.Assets;
 import io.example.test.game.util.Consts;
 
 public class StartScreen implements Screen {
     private Main main;
-    private ExtendViewport viewport;
+    private StretchViewport viewport;
     private Stage stage;
     private ImageButton startButton;
 

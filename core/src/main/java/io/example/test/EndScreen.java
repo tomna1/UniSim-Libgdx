@@ -8,13 +8,13 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import io.example.test.game.util.Consts;
 
 public class EndScreen implements Screen {
     private Main main;
-    private ExtendViewport viewport;
+    private StretchViewport viewport;
     private int score;
     private Stage stage;
     private Label scoreLabel;
