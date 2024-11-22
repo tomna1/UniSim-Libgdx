@@ -3,7 +3,6 @@ package io.example.test;
 import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import io.example.test.game.GameScreen;
@@ -29,7 +28,6 @@ public class Main extends Game {
     @Override
     public void create() {
         Assets.loadTextures();
-        // TODO: Fix the viewport
         viewport = new StretchViewport(Consts.GRID_WIDTH, Consts.GRID_HEIGHT);
 
         // Logging
