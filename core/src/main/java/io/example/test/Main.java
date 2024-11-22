@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.StretchViewport;
 
 import io.example.test.game.GameScreen;
 import io.example.test.game.util.Assets;
@@ -14,13 +15,13 @@ import io.example.test.game.util.Consts;
  * @author Thomas Nash
 */
 public class Main extends Game {
-    private ExtendViewport viewport;
+    private StretchViewport viewport;
 
     private StartScreen startScreen;
     private GameScreen gameScreen;
     private EndScreen endScreen;
 
-    public ExtendViewport getViewport() { return viewport; }
+    public StretchViewport getViewport() { return viewport; }
 
     /**
      * Called once at the start of the game.
@@ -29,7 +30,7 @@ public class Main extends Game {
     public void create() {
         Assets.loadTextures();
         // TODO: Fix the viewport
-        viewport = new ExtendViewport(Consts.GRID_WIDTH, Consts.GRID_HEIGHT);
+        viewport = new StretchViewport(Consts.GRID_WIDTH, Consts.GRID_HEIGHT);
 
         // Logging
         if (Consts.DEBUG_MODE_ON) {
